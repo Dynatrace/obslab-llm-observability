@@ -321,11 +321,15 @@ app.get('/favicon.ico', (req, res) => {
 });
 
 app.get('/api/v1/thumbsUp', (req, res) => {
-  logger.info("Positive user feedback");
+  const promptValue = req.query.prompt;
+  cleanedPrompt = promptValue.trim().toLowerCase();
+  logger.info("Positive user feedback for search term: " + cleanedPrompt);
 });
 
 app.get('/api/v1/thumbsDown', (req, res) => {
-  logger.info("Negative user feedback");
+  const promptValue = req.query.prompt;
+  cleanedPrompt = promptValue.trim().toLowerCase();
+  logger.info("Negative user feedback for search term: " + cleanedPrompt);
 });
 
 app.use('/images', express.static('public/images'))

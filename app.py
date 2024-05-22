@@ -139,13 +139,13 @@ def submit_completion(prompt: str):
 ####################################
 @app.get("/api/v1/thumbsUp")
 @otel_tracer.start_as_current_span("/api/v1/thumbsUp")
-def thumbs_up():
-    logger.info("Positive user feedback")
+def thumbs_up(prompt: str):
+    logger.info(f"Positive user feedback for search term: {prompt}")
 
 @app.get("/api/v1/thumbsDown")
 @otel_tracer.start_as_current_span("/api/v1/thumbsDown")
-def thumbs_down():
-    logger.info("Negative user feedback")
+def thumbs_down(prompt: str):
+    logger.info(f"Negative user feedback for search term: {prompt}")
 
 
 ##########################################
