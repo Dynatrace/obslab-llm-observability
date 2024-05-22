@@ -1,0 +1,126 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: weaviate-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 8Gi
+  storageClassName: "standard"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: weaviate-semantic-cache
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: weaviate-semantic-cache
+  template:
+    metadata:
+      labels:
+        app: weaviate-semantic-cache
+      annotations:
+        metrics.dynatrace.com/scrape: "true"
+        metrics.dynatrace.com/port: "2112"
+        metrics.dynatrace.com/path: "/metrics"
+    spec:
+      volumes:
+      - name: weaviate-volume
+        persistentVolumeClaim:
+          claimName: weaviate-pvc
+      containers:
+      - name: weaviate
+        image: semitechnologies/weaviate:latest
+        ports:
+        - containerPort: 8080
+        - containerPort: 2112
+        volumeMounts:
+        - name: weaviate-volume
+          mountPath: /var/lib/weaviate
+        env:
+        - name: PROMETHEUS_MONITORING_ENABLED
+          value: "true"
+        - name: AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED
+          value: "true"
+        - name: DEFAULT_VECTORIZER_MODULE
+          value: "none"
+        - name: AUTOSCHEMA_ENABLED
+          value: "false"
+        - name: ENABLE_MODULES
+          value: "text2vec-openai"
+        - name: PERSISTENCE_DATA_PATH
+          value: "/var/lib/weaviate"
+        resources:
+          limits:
+            cpu: "0.1"     # Maximum CPU usage
+            memory: "512Mi"  # Maximum memory usage
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: weaviate-service
+spec:
+  selector:
+    app: weaviate-semantic-cache
+  ports:
+  - protocol: TCP
+    port: 80
+    name: web
+    targetPort: 8080  # container port
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: travel-advisor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: travel-advisor
+  template:
+    metadata:
+      labels:
+        app: travel-advisor
+    spec:
+      containers:
+      - name: travel-advisor
+        image: gardnera/travelguide:py
+        #image: gardnera/travelguide:latest
+        #image: wolfgangb33r/travelguide:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        env:
+        - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: openai-details
+              key: API_KEY
+        - name: COMPLETION_LENGTH
+          value: "50"
+        - name: WEAVIATE_ENDPOINT
+          value: "http://weaviate-service:80"
+        - name: OTEL_COLLECTOR_ENDPOINT
+          value: "dynatrace-collector-opentelemetry-collector.default.svc.cluster.local:4317"
+        resources:
+          limits:
+            cpu: "0.1"     # Maximum CPU usage
+            memory: "512Mi"  # Maximum memory usage
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: travel-advisor-service
+spec:
+  selector:
+    app: travel-advisor
+  ports:
+  - protocol: TCP
+    port: 8080
+    targetPort: 8080  # Replace with your container port
+    nodePort: 30100
+  type: NodePort

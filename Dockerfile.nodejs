@@ -1,0 +1,22 @@
+FROM node:19-bullseye
+
+WORKDIR /home/node/app
+
+COPY package*.json ./
+
+COPY instrumentation.js ./
+
+RUN npm install
+
+COPY . .
+
+EXPOSE 8080
+
+# Original version
+#CMD [ "node", "wbapp.js" ]
+
+# My image
+#CMD [ "node", "app.js" ]
+
+# OpenTelemetry enabled
+CMD [ "node", "--require", "./instrumentation.js", "app.js"]

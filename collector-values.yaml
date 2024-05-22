@@ -1,0 +1,99 @@
+mode: deployment
+image:
+  repository: ghcr.io/dynatrace/dynatrace-otel-collector/dynatrace-otel-collector
+  tag: latest
+
+presets:
+  logsCollection:
+    enabled: true
+  # enables the k8sattributesprocessor and adds it to the traces, metrics, and logs pipelines
+  kubernetesAttributes:
+    enabled: true
+    extractAllPodLabels: true
+    extractAllPodAnnotations: true
+
+command:
+  name: dynatrace-otel-collector
+extraEnvs:
+- name: DT_API_TOKEN
+  valueFrom:
+    secretKeyRef:
+      name: dynatrace-otelcol-dt-api-credentials
+      key: DT_API_TOKEN
+- name: DT_ENDPOINT
+  valueFrom:
+    secretKeyRef:
+      name: dynatrace-otelcol-dt-api-credentials
+      key: DT_ENDPOINT
+resources:
+  limits:
+    memory: 512Mi
+config:
+  receivers:
+    jaeger: null
+    prometheus: null
+    zipkin: null
+    otlp:
+      protocols:
+        grpc:
+          endpoint: $MY_POD_IP:4317
+        http:
+          endpoint: $MY_POD_IP:4318
+
+    # Configuration to ingest log file
+    # Uncomment to use when running locally
+    # filelog:
+    #   include: [ 'c:\someDir\traveladvisor\*.log' ]
+  
+  processors:
+    transform:
+      metric_statements:
+        - context: metric
+          statements:
+            # Get count from the histogram. The new metric name will be <histogram_name>_count
+            - extract_count_metric(true) where type == METRIC_DATA_TYPE_HISTOGRAM
+
+            # Get sum from the histogram. The new metric name will be <histogram_name>_sum
+            - extract_sum_metric(true) where type == METRIC_DATA_TYPE_HISTOGRAM
+        - context: datapoint
+          statements:
+            # convert the <histogram_name>_sum metrics to gauges.
+            - convert_sum_to_gauge() where IsMatch(metric.name, ".*_sum")
+    filter:
+      error_mode: ignore
+      metrics:
+        metric:
+          - 'type == METRIC_DATA_TYPE_HISTOGRAM'
+          - 'type == METRIC_DATA_TYPE_SUMMARY'
+    cumulativetodelta:
+
+    # Configuration to scrape weaviate metrics
+    # Uncomment to use when running locally
+    # prometheus:
+    #   config:
+    #     scrape_configs:
+    #     - job_name: 'weaviate'
+    #       scrape_interval: 10s
+    #       static_configs:
+    #       - targets: ['localhost:2112']
+  exporters:
+    otlphttp:
+      endpoint: "${env:DT_ENDPOINT}/api/v2/otlp"
+      headers:
+        Authorization: "Api-Token ${env:DT_API_TOKEN}"
+  service:
+    pipelines:
+      traces:
+        receivers: [otlp]
+        processors: []
+        exporters: [otlphttp]
+      logs:
+        receivers: [otlp]
+        # receivers: [otlp, filelog] # Use when running locally
+        processors: []
+        exporters: [otlphttp]
+      metrics:
+        receivers: [otlp]
+        # receivers: [otlp, prometheus] # Use when running locally
+        processors: [transform, filter, cumulativetodelta]
+        exporters: [otlphttp]

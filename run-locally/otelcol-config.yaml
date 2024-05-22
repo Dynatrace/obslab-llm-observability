@@ -1,0 +1,63 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: localhost:4317
+      http:
+        endpoint: localhost:4318
+  filelog:
+    include: [ 'c:\path\to\traveladvisor\*.log' ]
+
+  prometheus:
+    config:
+      scrape_configs:
+      - job_name: 'weaviate'
+        scrape_interval: 10s
+        static_configs:
+        - targets: ['localhost:2112']
+    
+
+processors:
+  transform:
+    metric_statements:
+      - context: metric
+        statements:
+          # Get count from the histogram. The new metric name will be <histogram_name>_count
+          - extract_count_metric(true) where type == METRIC_DATA_TYPE_HISTOGRAM
+
+          # Get sum from the histogram. The new metric name will be <histogram_name>_sum
+          - extract_sum_metric(true) where type == METRIC_DATA_TYPE_HISTOGRAM
+      - context: datapoint
+        statements:
+          # convert the <histogram_name>_sum metrics to gauges.
+          - convert_sum_to_gauge() where IsMatch(metric.name, ".*_sum")
+  filter:
+    error_mode: ignore
+    metrics:
+      metric:
+        - 'type == METRIC_DATA_TYPE_HISTOGRAM'
+        - 'type == METRIC_DATA_TYPE_SUMMARY'
+  cumulativetodelta:
+
+exporters:
+  debug:
+    verbosity: detailed
+  otlphttp:
+    endpoint: ${env:DT_ENDPOINT}
+    headers:
+      Authorization: "Api-Token ${env:API_TOKEN}"
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: []
+      exporters: [otlphttp, debug]
+    logs:
+      receivers: [filelog]
+      processors: []
+      exporters: [otlphttp, debug]
+    metrics:
+      receivers: [prometheus]
+      processors: [transform, filter, cumulativetodelta]
+      exporters: [otlphttp, debug]
