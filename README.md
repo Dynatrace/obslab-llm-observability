@@ -127,8 +127,6 @@ This demo comes with several prebuilt dashboards. Do the following in Dynatrace.
 
 ![upload button](.devcontainer/images/dashboard-upload.png)
 
-TODO: Update screenshot when finalised
-
 ![dashboard image](dynatrace/dashboard.png)
 
 Repeat this process for the following dashboards:
