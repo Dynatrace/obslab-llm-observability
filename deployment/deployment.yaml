@@ -88,8 +88,8 @@ spec:
     spec:
       containers:
       - name: travel-advisor
-        image: ghcr.io/dynatrace-perfclinics/traveladvisor:main
-        #image: gardnera/travelguide:py
+        #image: ghcr.io/dynatrace-perfclinics/traveladvisor:main
+        image: gardnera/travelguide:py
         #image: wolfgangb33r/travelguide:latest
         imagePullPolicy: Always
         ports:
