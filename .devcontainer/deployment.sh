@@ -296,7 +296,7 @@ helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm
 helm repo update
 helm upgrade -i dynatrace-collector open-telemetry/opentelemetry-collector -f collector-values.yaml --wait
 
-kubectl apply -f deployment/deployment_with_weaviate.yaml -n travel-advisor
+kubectl apply -f deployment/deployment.yaml -n travel-advisor
 
 # Wait for Dynatrace to be ready
 kubectl -n dynatrace wait --for=condition=Ready pod --all --timeout=10m
