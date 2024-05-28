@@ -106,6 +106,12 @@ spec:
           value: "http://weaviate-service:80"
         - name: OTEL_COLLECTOR_ENDPOINT
           value: "dynatrace-collector-opentelemetry-collector.default.svc.cluster.local:4317"
+        - name: TRACELOOP_BASE_URL
+          value: "dynatrace-collector-opentelemetry-collector.default.svc.cluster.local:4318"
+        - name: TRACELOOP_TELEMETRY
+          value: "False"
+        - name: OTEL_COLLECTOR_ENDPOINT_INSECURE
+          value: "True"
         resources:
           limits:
             cpu: "0.1"     # Maximum CPU usage
