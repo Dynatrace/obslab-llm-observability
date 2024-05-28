@@ -89,7 +89,7 @@ spec:
       containers:
       - name: travel-advisor
         #image: ghcr.io/dynatrace-perfclinics/traveladvisor:rag
-        image: gardnera/travelguide:rag
+        image: gardnera/traveladvisor:rag
         #image: gardnera/travelguide:latest
         #image: wolfgangb33r/travelguide:latest
         imagePullPolicy: Always
