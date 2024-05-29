@@ -42,10 +42,10 @@ Create a new access token with the following permissions:
 - Read entities
 - Read Settings
 - Write Settings
-- Access problem and event feed, metrics and topology
+- Access problem and event feed, metrics, and topology
 - Read configuration
 - Write configuration
-- Paas integration - installer downloader
+- PaaS integration - installer download
 
 ### DT_API_TOKEN
 

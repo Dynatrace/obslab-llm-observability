@@ -59,6 +59,9 @@ resource = Resource.create({
     "service.version": "0.1.0"
 })
 
+logger.info(f"OTEL_COLLECTOR_ENDPOINT: {OTEL_COLLECTOR_ENDPOINT}")
+logger.info(f"OTEL_COLLECTOR_ENDPOINT_INSECURE: {OTEL_COLLECTOR_ENDPOINT_INSECURE}")
+
 provider = TracerProvider(resource=resource)
 processor = BatchSpanProcessor(OTLPSpanExporter(endpoint=OTEL_COLLECTOR_ENDPOINT, insecure=OTEL_COLLECTOR_ENDPOINT_INSECURE))
 provider.add_span_processor(processor)
