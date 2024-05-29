@@ -1,10 +1,16 @@
 # EasyTravel GPT Travel Advisor
 
-Demo application for giving travel advice.
-
-Available in NodeJS and Python.
+Demo Retrieval Augmented Generation (RAG) LLM application for giving travel advice.
 
 Uses OpenAI ChatGPT to generate advice for a given destination.
+
+To demonstrate that the RAG is answering from the custom data, the RAG is only trained on two destinations: [Bali](destinations/bali.html) and [Sydney](destinations/sydney.html).
+
+The content is obviously false, again to demonstrate that the data really is pulling from the custom dataset.
+
+- The application will use the contextual (training) information we have provided
+- If data is available (ie. you have searched for either Bali or Sydney), data will be returned
+- A message of "Sorry, I have no data on <destination>" will be returned for ALL other destinations
 
 ![title](screenshot.png)
 
@@ -104,24 +110,12 @@ A new browser tab will open and you should see the demo.
 
 ![application user interface](screenshot.png)
 
-## Using LLM-based Destination Search
-
-Type the name of a destination (eg. `Vienna`) into the search bar and click the `Advise` button.
-
-### What Happens Next?
-
-- The application will request information for your destination from OpenAI using ChatGPT 3.5.
-- A result will be returned from OpenAI
-- The result is cached in the weviate vector cache
-
-So if you search for `London` again, this time, the result will be served from the cache - saving you the roundtrip (and $) to OpenAI / ChatGPT.
-
 ## Visualising Data in Dynatrace
 
 ### Uploading the Dashboards
 This demo comes with several prebuilt dashboards. Do the following in Dynatrace.
 
-- Save the contents of [dynatrace/dashboards/k8s/openai/dashboard.json](dynatrace/dashboards/k8s/openai/dashboard.json) to your computer
+- Save the contents of [dynatrace/dashboards/openai/Travel-Advisor-Overview.json](dynatrace/dashboards/openai/Travel-Advisor-Overview.json) to your computer
 - Press  `Ctrl + k` and search for `dashboards` or select the icon from the left toolbar
 - Select the `Upload` button and upload the JSON file.
 
@@ -169,89 +163,3 @@ python app.py
 ```
 
 ![opentelemetry trace](.devcontainer/images/get-completion-trace.png)
-
---------------------------
-
-## Configuration
-
-The travel advisor can be configured through setting the following environment variables:
-
-- **OPENAI_API_KEY**: (mandatory) Sets the OpenAI API key that is used to generate the completions.
-- **COMPLETION_LENGTH**: (optional) Sets the maximum completion length that is requested at OpenAI to reduce token cost. Default is set to 20 words (tokens).
-- **WEAVIATE_ENDPOINT**: (optional) Enables the use of Weaviate vector database as semantic cache, e.g.: '192.168.0.110:8080'.
-- **CACHE_MINUTES**: (optional) The prompt cache time in minutes. Default is set to 60 minutes.
-
-## Dependencies
-
-```bash
-npm install winston
-npm install openai
-npm install express
-npm install weaviate-ts-client
-```
-
-## Run
-
-```bash
-docker pull wolfgangb33r/travelguide:latest
-docker run -d --network="host" -e "OPENAI_API_KEY=<YOUR_OPENAI_KEY>" -e "COMPLETION_LENGTH=100" -e "WEAVIATE_ENDPOINT=localhost:9999" -p 8080:8080 wolfgangb33r/travelguide:latest
-
-docker pull semitechnologies/weaviate
-
-docker run -d -v "/home/ec2-user/wdata:/var/lib/weaviate" -e "PERSISTENCE_DATA_PATH=/var/lib/weaviate" -e "PROMETHEUS_MONITORING_ENABLED=true" -e "AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED=true" -e "DEFAULT_VECTORIZER_MODULE=none" -e "AUTOSCHEMA_ENABLED=false" -e "ENABLE_MODULES=text2vec-openai" -p 9999:8080 -p 2112:2112 semitechnologies/weaviate
-```
-
-## Deploy K8S
-
-```bash
-kubectl create namespace travel-advisor
-kubectl apply -f ./deployment/deployment_with_weaviate.yaml -n travel-advisor
-kubectl get services -o wide -n travel-advisor
-kubectl delete deployment travel-advisor -n travel-advisor
-kubectl delete service travel-advisor-service -n travel-advisor
-```
-
-
-## Dynatrace
-
-* Docker image log is visible on process group page
-* Create a log ingestion rule for the process group in Settings > Log monitoring > Log ingest rules
-* Restart the OneAgent with 'sudo systemctl stop oneagent' and start it again
-* Create a Log processing rule: 
-* 
-```
-    matchesPhrase(content, "prompt_tokens")
-    PARSE(content,"LD '\"prompt_tokens\":' INT:promt_tokens ',\"completion_tokens\":' INT:completion_tokens ',\"total_tokens\":' INT:total_tokens")
-```
-
-## Dynatrace Grail/DQL
-
-Sum the total prompt token count with the following DQL dashboard query:
-
-```
-fetch logs
-| filter k8s.namespace.name == "travel-advisor"
-| filter matchesPhrase(content, "gpt-3.5")
-| parse content, "LD '\"prompt_tokens\":' INT:promptTokens"
-| parse content, "LD '\"completion_tokens\":' INT:completionTokens"
-| parse content, "LD '\"model\":' STRING:llmModel"
-| summarize promptTokensCount = sum(promptTokens)
-```
-
-Calculate the OpenAI costs by applying the current token prices for the prompt tokens as well as the sum of the completion tokens.
-Mind that OpenAI pricing differentiates between prompt tokens and completion tokens as well as by model used.
-
-```
-fetch logs
-| filter k8s.namespace.name == "travel-advisor"
-| filter matchesPhrase(content, "gpt-3.5") 
-| parse content, "LD '\"prompt_tokens\":' INT:promptTokens"
-| parse content, "LD '\"completion_tokens\":' INT:completionTokens"
-| parse content, "LD '\"model\":' STRING:llmModel"
-| summarize cost = (sum(promptTokens) / 1000.0 * 0.0010) + (sum(completionTokens) / 1000.0 * 0.0020) 
-```
-
-
-See example Dynatrace dashboard [here](dynatrace/dashboard.json)
-
-![dashboard](dynatrace/dashboard.png)
