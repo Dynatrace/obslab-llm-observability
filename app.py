@@ -153,6 +153,6 @@ if __name__ == "__main__":
 
     # Run the app using uvicorn
     if RUN_LOCALLY:
-        uvicorn.run(app, host="localhost", port=8080, log_config="run-locally/logconf.ini")
+        uvicorn.run(app, host="0.0.0.0", port=8080, log_config="run-locally/logconf.ini")
     else:
-        uvicorn.run(app, host="localhost", port=8080)
+        uvicorn.run(app, host="0.0.0.0", port=8080)
