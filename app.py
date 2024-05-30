@@ -7,6 +7,7 @@ from langchain_community.vectorstores import FAISS
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains import create_retrieval_chain
+from langchain_community.callbacks import get_openai_callback
 import logging
 import sys
 import os
@@ -21,6 +22,8 @@ from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 
 from traceloop.sdk import Traceloop
+
+from tokencost import calculate_completion_cost, calculate_prompt_cost
 
 Traceloop.init()
 
@@ -93,6 +96,7 @@ def prep_system():
 
     logger.info("Initialising ChatGPT LLM...")
     llm = ChatOpenAI()
+
     prompt = ChatPromptTemplate.from_template("""Answer the following question based only on the provided context:
 
     <context>
@@ -125,7 +129,14 @@ def submit_completion(prompt: str):
     with otel_tracer.start_as_current_span(name="/api/v1/completion") as current_span:
         if prompt:
             logger.info(f"Calling RAG to get the answer to the question: {prompt}...")
-            response = retrieval_chain.invoke({"input": prompt})
+            response = None
+            with get_openai_callback() as cb: 
+                response = retrieval_chain.invoke({"input": prompt})
+
+            # Log information for DQL to grab
+            logger.info(f"Response: {response}. Using RAG. model={AI_MODEL}. prompt_tokens={cb.prompt_tokens}. completion_tokens={cb.completion_tokens}. total_tokens={cb.total_tokens}. total_cost={cb.total_cost}")
+
+            
             return { "message": response['answer'] }
         else: # No, or invalid prompt given
             current_span.add_event(f"No prompt provided or prompt too long (over {MAX_PROMPT_LENGTH} chars)")
@@ -135,13 +146,13 @@ def submit_completion(prompt: str):
 ####################################
 @app.get("/api/v1/thumbsUp")
 @otel_tracer.start_as_current_span("/api/v1/thumbsUp")
-def thumbs_up():
-    logger.info("Positive user feedback")
+def thumbs_up(prompt: str):
+    logger.info(f"Positive user feedback for search term: {prompt}")
 
 @app.get("/api/v1/thumbsDown")
 @otel_tracer.start_as_current_span("/api/v1/thumbsDown")
-def thumbs_down():
-    logger.info("Negative user feedback")
+def thumbs_down(prompt: str):
+    logger.info(f"Negative user feedback for search term: {prompt}")
 
 if __name__ == "__main__":
 

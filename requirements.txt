@@ -11,3 +11,4 @@ langchain_community == 0.2.1
 beautifulsoup4 == 4.12.3
 lxml == 5.2.2
 faiss-cpu == 1.8.0
+tokencost == 0.1.8
