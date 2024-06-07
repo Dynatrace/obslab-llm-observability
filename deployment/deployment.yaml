@@ -130,3 +130,58 @@ spec:
     targetPort: 8080  # Replace with your container port
     nodePort: 30100
   type: NodePort
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: k6-config
+  namespace: default
+data:
+  script.js: |
+    import http from 'k6/http';
+    import { sleep } from 'k6';
+
+    export const options = {
+      vus: 10,
+      duration: '1m',
+    };
+    
+    export default function () {
+      http.get('http://travel-advisor-service.travel-advisor.svc.cluster.local/api/v1/completion?prompt=sydney');
+      sleep(1);
+    }
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: run-k6
+spec:
+  schedule: "*/1 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: k6
+            image: hrexed/xk6-dynatrace-output:0.11
+            args: ["run", "/script.js", "-o", "output-dynatrace"]
+            volumeMounts:
+            - name: config-volume
+              mountPath: /script.js
+              subPath: script.js
+            env:
+              - name: K6_DYNATRACE_URL
+                valueFrom:
+                  secretKeyRef:
+                    name: dt-details
+                    key: DT_ENDPOINT
+              - name: K6_DYNATRACE_APITOKEN
+                valueFrom:
+                  secretKeyRef:
+                    name: dt-details
+                    key: DT_API_TOKEN
+          volumes:
+            - name: config-volume
+              configMap:
+                name: k6-config
+          restartPolicy: OnFailure
