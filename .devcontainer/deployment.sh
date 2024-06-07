@@ -271,6 +271,11 @@ curl -X 'POST' \
         }
       ]'
 
+# Create secret for k6 to use
+kubectl -n travel-advisor create secret generic dt-details \
+  --from-literal=DT_ENDPOINT=$DT_URL \
+  --from-literal=DT_API_TOKEN=$DT_TOKEN
+
 # Deploy Dynatrace
 kubectl -n dynatrace create secret generic dynakube --from-literal="apiToken=$DT_OPERATOR_TOKEN" --from-literal="dataIngestToken=$DT_TOKEN"
 
