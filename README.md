@@ -26,7 +26,7 @@ You need an OpenAI account with credit added to run this demo!
 
 OpenAI / ChatGPT severely limits the ability for API access if you do not have credit. Adding a small amount of credit ($2-$3) is the best way to make this (and all other ChatGPT demos) run smoothly.
 
-We have developed, tested and demoed this repository hundreds or times and still have money left from the initial $5 credit load.
+We have developed, tested and demoed this repository hundreds of times and still have money left from the initial $5 credit load.
 
 ### Create OpenAI API Token
 
