@@ -27,12 +27,13 @@ WEAVIATE_READ_TIMEOUT_SECONDS = 90
 WEAVIATE_STARTUP_PERIOD_SECONDS = 30
 COMPLETION_LENGTH = os.environ.get("COMPLETION_LENGTH", 20)
 CACHE_MINUTES = os.environ.get("CACHE_MINUTES", 60)
-AI_MODEL = os.environ.get("AI_MODEL", "gpt-3.5-turbo")
+AI_MODEL = os.environ.get("AI_MODEL", "gpt-4")
 AI_SYSTEM = "openai"
 MAX_PROMPT_LENGTH = 50
-AI_EMBEDDING_MODEL = "text-embedding-ada-002"
+AI_EMBEDDING_MODEL = os.environ.get("AI_EMBEDDING_MODEL", "text-embedding-ada-002")
+OPENAI_BASE_URL = os.environ.get("OPENAI_BASE_URL", "")
 
-Traceloop.init()
+Traceloop.init(app_name="my app name")
 
 # Temporary until LLM Semantic conventions
 #  are released: https:#github.com/traceloop/semantic-conventions/blob/4ee7433cd9bbda00bca0f118c1230ff13eac62e5/docs/gen-ai/llm-spans.md
@@ -81,7 +82,14 @@ otel_tracer = trace.get_tracer("my.tracer.name")
 #############
 # CONFIGURE 
 
-openai_client = OpenAI(api_key=OPENAI_KEY )
+if OPENAI_BASE_URL != "":
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {OPENAI_KEY}"
+    }
+    openai_client = OpenAI(base_url=OPENAI_BASE_URL, default_headers=headers)
+else:
+    openai_client = OpenAI(api_key=OPENAI_KEY)
 
 ############
 # CONFIGURE ENDPOINTS
@@ -92,7 +100,6 @@ app = FastAPI()
 @app.get("/api/v1/completion")
 def submit_completion(prompt: str):
     with otel_tracer.start_as_current_span(name="/api/v1/completion") as current_span:
-    # with otel_tracer.start_as_current_span(name="/api/v1/completion", attributes={ SEMCONV_TMP_GENAI_SYSTEM: AI_SYSTEM, SEMCONV_TMP_GENAI_REQUEST_MODEL: AI_MODEL, SEMCONV_TMP_GENAI_USAGE_COMPLETION_TOKENS: COMPLETION_LENGTH, SEMCONV_GENAI_REQUEST_PROMPT: prompt  }) as current_span:
         logger.info(f"Input prompt was: {prompt}")
         cache_hit = False
 
@@ -219,7 +226,7 @@ def get_embedding_vector(text):
     # current_span.set_attribute(key="model", value=AI_EMBEDDING_MODEL)
     # current_span.set_attribute(key="input", value=text)
 
-    resp = openai_client.embeddings.create(input=text, model=AI_EMBEDDING_MODEL)
+    resp = openai_client.embeddings.create(input=text, model=AI_EMBEDDING_MODEL, encoding_format="float")
 
     return resp.data[0].embedding
 
