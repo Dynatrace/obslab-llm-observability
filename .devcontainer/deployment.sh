@@ -3,12 +3,12 @@
 kubectl create namespace travel-advisor
 kubectl create namespace dynatrace
 
-sed -i "s,TENANTURL_TOREPLACE,$DT_URL," /workspaces/$RepositoryName/dynatrace/dynakube.yaml
+sed -i "s,TENANTURL_TOREPLACE,$DT_ENDPOINT," /workspaces/$RepositoryName/dynatrace/dynakube.yaml
 sed -i "s,CLUSTER_NAME_TO_REPLACE,aio-dt-demo,"  /workspaces/$RepositoryName/dynatrace/dynakube.yaml
 
 # Capture OpenTelemetry Span Attributes
 curl -X 'POST' \
-  "$DT_URL/api/v2/settings/objects?validateOnly=false" \
+  "$DT_ENDPOINT/api/v2/settings/objects?validateOnly=false" \
   -H 'accept: application/json; charset=utf-8' \
   -H "Authorization: Api-Token $DT_WRITE_SETTINGS_TOKEN" \
   -H 'Content-Type: application/json; charset=utf-8' \
@@ -272,9 +272,7 @@ curl -X 'POST' \
       ]'
 
 # Create secret for k6 to use
-kubectl -n travel-advisor create secret generic dt-details \
-  --from-literal=DT_ENDPOINT=$DT_URL \
-  --from-literal=DT_API_TOKEN=$DT_TOKEN
+kubectl -n travel-advisor create secret generic dt-details --from-literal=DT_ENDPOINT=$DT_ENDPOINT --from-literal=DT_API_TOKEN=$DT_TOKEN
 
 # Deploy Dynatrace
 kubectl -n dynatrace create secret generic dynakube --from-literal="apiToken=$DT_OPERATOR_TOKEN" --from-literal="dataIngestToken=$DT_TOKEN"
@@ -291,7 +289,7 @@ kubectl -n dynatrace wait pod --for=condition=ready --selector=app.kubernetes.io
 kubectl -n dynatrace apply -f /workspaces/$RepositoryName/dynatrace/dynakube.yaml
 
 kubectl create secret generic dynatrace-otelcol-dt-api-credentials \
-  --from-literal=DT_ENDPOINT=$DT_URL \
+  --from-literal=DT_ENDPOINT=$DT_ENDPOINT \
   --from-literal=DT_API_TOKEN=$DT_TOKEN
 
 kubectl create secret generic openai-details -n travel-advisor \

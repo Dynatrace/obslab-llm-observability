@@ -83,7 +83,7 @@ Create a third token with this permission:
 
 You should now have `5` pieces of information:
 
-- The `DT_URL` (eg. `https://abc12345.live.dynatrace`)
+- The `DT_ENDPOINT` (eg. `https://abc12345.live.dynatrace`)
 - The `DT_OPERATOR_TOKEN`
 - The `DT_API_TOKEN`
 - The `DT_WRITE_SETTINGS_TOKEN`

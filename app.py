@@ -32,8 +32,9 @@ AI_SYSTEM = "openai"
 MAX_PROMPT_LENGTH = 50
 AI_EMBEDDING_MODEL = os.environ.get("AI_EMBEDDING_MODEL", "text-embedding-ada-002")
 OPENAI_BASE_URL = os.environ.get("OPENAI_BASE_URL", "")
+OTEL_COLLECTOR_ENDPOINT_INSECURE = os.environ.get("OTEL_COLLECTOR_ENDPOINT_INSECURE", False)
 
-Traceloop.init(app_name="my app name")
+Traceloop.init(app_name="my app name", api_endpoint=OTEL_COLLECTOR_ENDPOINT)
 
 # Temporary until LLM Semantic conventions
 #  are released: https:#github.com/traceloop/semantic-conventions/blob/4ee7433cd9bbda00bca0f118c1230ff13eac62e5/docs/gen-ai/llm-spans.md
@@ -70,7 +71,7 @@ resource = Resource.create({
 })
 
 provider = TracerProvider(resource=resource)
-processor = BatchSpanProcessor(OTLPSpanExporter(endpoint=OTEL_COLLECTOR_ENDPOINT, insecure=True))
+processor = BatchSpanProcessor(OTLPSpanExporter(endpoint=OTEL_COLLECTOR_ENDPOINT, insecure=OTEL_COLLECTOR_ENDPOINT_INSECURE))
 provider.add_span_processor(processor)
 
 # Sets the global default tracer provider
