@@ -108,6 +108,10 @@ spec:
           value: "False"
         - name: OTEL_COLLECTOR_ENDPOINT_INSECURE
           value: "True"
+        - name: "AI_MODEL"
+          value: "gpt-4"
+        - name: "AI_EMBEDDING_MODEL"
+          value: "text-embedding-ada-002"
         resources:
           limits:
             cpu: "0.1"     # Maximum CPU usage
