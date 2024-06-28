@@ -34,7 +34,7 @@ AI_EMBEDDING_MODEL = os.environ.get("AI_EMBEDDING_MODEL", "text-embedding-ada-00
 OPENAI_BASE_URL = os.environ.get("OPENAI_BASE_URL", "")
 OTEL_COLLECTOR_ENDPOINT_INSECURE = os.environ.get("OTEL_COLLECTOR_ENDPOINT_INSECURE", False)
 
-Traceloop.init(app_name="my app name", api_endpoint=OTEL_COLLECTOR_ENDPOINT)
+Traceloop.init(app_name="travel-advisor", api_endpoint=OTEL_COLLECTOR_ENDPOINT)
 
 # Temporary until LLM Semantic conventions
 #  are released: https:#github.com/traceloop/semantic-conventions/blob/4ee7433cd9bbda00bca0f118c1230ff13eac62e5/docs/gen-ai/llm-spans.md
