@@ -12,14 +12,14 @@ import weaviate.connect
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
-from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.trace import Status, StatusCode
 import logging
 from traceloop.sdk import Traceloop
 
 RUN_LOCALLY = os.environ.get("RUN_LOCALLY", False)
-OTEL_COLLECTOR_ENDPOINT = os.environ.get("OTEL_COLLECTOR_ENDPOINT", "localhost:4317")
+OTEL_COLLECTOR_ENDPOINT = os.environ.get("OTEL_COLLECTOR_ENDPOINT", "localhost:4318")
 OPENAI_KEY = os.environ.get("OPENAI_API_KEY")
 WEAVIATE_ENDPOINT = os.environ.get("WEAVIATE_ENDPOINT", None)
 WEAVIATE_CONNECT_TIMEOUT_SECONDS = 90
@@ -71,7 +71,7 @@ resource = Resource.create({
 })
 
 provider = TracerProvider(resource=resource)
-processor = BatchSpanProcessor(OTLPSpanExporter(endpoint=OTEL_COLLECTOR_ENDPOINT, insecure=OTEL_COLLECTOR_ENDPOINT_INSECURE))
+processor = BatchSpanProcessor(OTLPSpanExporter(endpoint=OTEL_COLLECTOR_ENDPOINT))
 provider.add_span_processor(processor)
 
 # Sets the global default tracer provider

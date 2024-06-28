@@ -88,9 +88,7 @@ spec:
     spec:
       containers:
       - name: travel-advisor
-        #image: ghcr.io/dynatrace-perfclinics/traveladvisor:main
         image: gardnera/traveladvisor:main
-        #image: wolfgangb33r/travelguide:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
@@ -105,7 +103,7 @@ spec:
         - name: WEAVIATE_ENDPOINT
           value: "http://weaviate-service:80"
         - name: OTEL_COLLECTOR_ENDPOINT
-          value: "dynatrace-collector-opentelemetry-collector.default.svc.cluster.local:4317"
+          value: "http://dynatrace-collector-opentelemetry-collector.default.svc.cluster.local:4318"
         - name: TRACELOOP_TELEMETRY
           value: "False"
         - name: OTEL_COLLECTOR_ENDPOINT_INSECURE
