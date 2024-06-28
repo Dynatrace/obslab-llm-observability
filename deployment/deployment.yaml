@@ -142,7 +142,7 @@ data:
     };
     
     export default function () {
-      http.get('http://travel-advisor-service.travel-advisor.svc.cluster.local/api/v1/completion?prompt=sydney');
+      http.get('http://travel-advisor-service.travel-advisor.svc.cluster.local:8080/api/v1/completion?prompt=sydney');
       sleep(1);
     }
 ---
