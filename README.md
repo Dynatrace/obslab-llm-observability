@@ -145,18 +145,7 @@ This demo comes with several prebuilt dashboards. Do the following in Dynatrace.
 
 ![dashboard image](dynatrace/dashboard.png)
 
-Repeat this process for the following dashboards:
-
-- [dynatrace/dashboards/weaviate/Weaviate-Snapshots.json](dynatrace/dashboards/weaviate/Weaviate-Snapshots.json)
-- [dynatrace/dashboards/weaviate/Weaviate-Importing-Data.json](dynatrace/dashboards/weaviate/Weaviate-Importing-Data.json)
-- [dynatrace/dashboards/weaviate/Weaviate-LSM-Store.json](dynatrace/dashboards/weaviate/Weaviate-LSM-Store.json)
-- [dynatrace/dashboards/weaviate/Weaviate-Object-Operations.json](dynatrace/dashboards/weaviate/Weaviate-Object-Operations.json)
-- [dynatrace/dashboards/weaviate/Weaviate-Query-Performance.json](dynatrace/dashboards/weaviate/Weaviate-Query-Performance.json)
-- [dynatrace/dashboards/weaviate/Weaviate-Usage.json](dynatrace/dashboards/weaviate/Weaviate-Usage.json)
-- [dynatrace/dashboards/weaviate/Weaviate-Schema-Transactions.json](dynatrace/dashboards/weaviate/Weaviate-Schema-Transactions.json)
-- [dynatrace/dashboards/weaviate/Weaviate-Startup-Times.json](dynatrace/dashboards/weaviate/Weaviate-Startup-Times.json)
-- [dynatrace/dashboards/weaviate/Weaviate-Tombstone-Analysis.json](dynatrace/dashboards/weaviate/Weaviate-Tombstone-Analysis.json)
-- [dynatrace/dashboards/weaviate/Weaviate-Vector-Index.json](dynatrace/dashboards/weaviate/Weaviate-Vector-Index.json)
+Repeat this process for all the dashboards inside [dynatrace/dashboards/*](dynatrace/dashboards)
 
 ## Run Locally with Weaviate Cache
 
