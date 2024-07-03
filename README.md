@@ -54,30 +54,30 @@ In Dynatrace, press `Ctrl + k` and search for `access tokens`. Choose the first 
 
 Create a new access token with the following permissions:
 
-- Create ActiveGate tokens
-- Read entities
-- Read Settings
-- Write Settings
-- Access problem and event feed, metrics, and topology
-- Read configuration
-- Write configuration
-- Paas integration - installer downloader
+- Create ActiveGate tokens (`activeGateTokenManagement.create`)
+- Read entities (`entities.read`)
+- Read Settings (`settings.read`)
+- Write Settings (`settings.write`)
+- Access problem and event feed, metrics, and topology (`DataExport`)
+- Read configuration (`ReadConfig`)
+- Write configuration (`WriteConfig`)
+- Paas integration - Installer download (`InstallerDownload`)
 
 ### DT_API_TOKEN
 
 Create a second token with these permissions:
 
-- Ingest metrics
-- Ingest logs
-- Ingest events
-- Ingest OpenTelemetry
-- Read metrics
+- Ingest metrics (`metrics.ingest`)
+- Ingest logs (`logs.ingest`)
+- Ingest events (`events.ingest`)
+- Ingest OpenTelemetry traces  (`openTelemetryTrace.ingest`)
+- Read metrics (`metrics.read`)
 
 ### DT_WRITE_SETTINGS_TOKEN
 
 Create a third token with this permission:
 
-- Write settings
+- Write settings  (`settings.write`)
 
 ## 🔁 Recap
 
