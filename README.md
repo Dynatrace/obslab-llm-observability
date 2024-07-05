@@ -8,6 +8,8 @@ Uses OpenAI ChatGPT to generate advice for a given destination.
 
 ![title](screenshot.png)
 
+![architecture](architecture.jpg)
+
 ## "Standard" Version vs. "RAG" Version
 
 This demo is available in two flavours.
