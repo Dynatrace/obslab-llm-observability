@@ -10,6 +10,12 @@ Uses OpenAI ChatGPT to generate advice for a given destination.
 
 ![architecture](architecture.jpg)
 
+## How it works
+The user interacts with the demo app (travel advisor) on port `30100`. The app is monitored either via native OpenTelemetry (as per the demo) or (if the user chooses) the OneAgent (eg. the nodeJS version).
+In both cases, the user enters a destination (eg. `Sydney`). The application first checks the cache. If a response for `Sydney` is found, the response is returned from the cache.
+If a cached response is not available, the application requests advice from the LLM (OpenAI's ChatGPT). When hte response is returned, it is cached so that subsequent calls for the same destination (eg. `Sydney`) are served from the cache.
+This saves roundtrips to ChatGPT and thus `$`.
+
 ## "Standard" Version vs. "RAG" Version
 
 This demo is available in two flavours.
