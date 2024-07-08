@@ -109,7 +109,7 @@ spec:
         - name: OTEL_COLLECTOR_ENDPOINT_INSECURE
           value: "True"
         - name: "AI_MODEL"
-          value: "gpt-3.5"
+          value: "gpt-3.5-turbo"
         - name: "AI_EMBEDDING_MODEL"
           value: "text-embedding-ada-002"
         resources:
