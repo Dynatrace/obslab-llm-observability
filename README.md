@@ -12,7 +12,16 @@ The content is obviously false, again to demonstrate that the data really is pul
 - If data is available (ie. you have searched for either Bali or Sydney), data will be returned
 - A message of "Sorry, I have no data on <destination>" will be returned for ALL other destinations
 
-![title](screenshot.png)
+![traveladvisor app](screenshot.png)
+
+![RAG architecture](architecture.jpg)
+
+## How it works
+The user interacts with the demo app (travel advisor) on port `30100`. The app is monitored either via native OpenTelemetry (as per the demo) or (if the user chooses) the OneAgent (eg. the nodeJS version). In both cases, the user enters a destination (eg. Sydney). The application first checks the cache. If a response for Sydney is found, the response is returned from the cache. If a cached response is not available, the application requests advice from the LLM (OpenAI's ChatGPT).
+
+**The call to the LLM is enriched with the custom destination advice ([loaded from the HTML files](destinations)). The LLM is instructed to only provide an answer based on the provided context (ie. the file content)**.
+
+When the response is returned, it is cached so that subsequent calls for the same destination (eg. Sydney) are served from the cache. This saves roundtrips to ChatGPT and thus $.
 
 ## ⚠️ OpenAI Paid Account Required
 
