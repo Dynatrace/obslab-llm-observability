@@ -1,16 +1,12 @@
 #!/usr/bin/env bash
 
 kubectl create namespace travel-advisor
-kubectl create namespace dynatrace
-
-sed -i "s,TENANTURL_TOREPLACE,$DT_ENDPOINT," /workspaces/$RepositoryName/dynatrace/dynakube.yaml
-sed -i "s,CLUSTER_NAME_TO_REPLACE,aio-dt-demo,"  /workspaces/$RepositoryName/dynatrace/dynakube.yaml
 
 # Capture OpenTelemetry Span Attributes
 curl -X 'POST' \
   "$DT_ENDPOINT/api/v2/settings/objects?validateOnly=false" \
   -H 'accept: application/json; charset=utf-8' \
-  -H "Authorization: Api-Token $DT_WRITE_SETTINGS_TOKEN" \
+  -H "Authorization: Api-Token $DT_TOKEN" \
   -H 'Content-Type: application/json; charset=utf-8' \
   -d '[ {
           "schemaId": "builtin:attribute-allow-list",
@@ -274,20 +270,6 @@ curl -X 'POST' \
 # Create secret for k6 to use
 kubectl -n travel-advisor create secret generic dt-details --from-literal=DT_ENDPOINT=$DT_ENDPOINT --from-literal=DT_API_TOKEN=$DT_TOKEN
 
-# Deploy Dynatrace
-kubectl -n dynatrace create secret generic dynakube --from-literal="apiToken=$DT_OPERATOR_TOKEN" --from-literal="dataIngestToken=$DT_TOKEN"
-
-wget -O /workspaces/$RepositoryName/dynatrace/kubernetes.yaml https://github.com/Dynatrace/dynatrace-operator/releases/download/v0.15.0/kubernetes.yaml
-wget -O /workspaces/$RepositoryName/dynatrace/kubernetes-csi.yaml https://github.com/Dynatrace/dynatrace-operator/releases/download/v0.15.0/kubernetes-csi.yaml
-sed -i "s,cpu: 300m,cpu: 100m," /workspaces/$RepositoryName/dynatrace/kubernetes.yaml
-sed -i "s,cpu: 300m,cpu: 100m," /workspaces/$RepositoryName/dynatrace/kubernetes-csi.yaml
-# Shrink resource utilisation to work on GitHub codespaces (ie. a small environment)
-# Apply (slightly) customised manifests
-kubectl apply -f /workspaces/$RepositoryName/dynatrace/kubernetes.yaml
-kubectl apply -f /workspaces/$RepositoryName/dynatrace/kubernetes-csi.yaml
-kubectl -n dynatrace wait pod --for=condition=ready --selector=app.kubernetes.io/name=dynatrace-operator,app.kubernetes.io/component=webhook --timeout=300s
-kubectl -n dynatrace apply -f /workspaces/$RepositoryName/dynatrace/dynakube.yaml
-
 kubectl create secret generic dynatrace-otelcol-dt-api-credentials \
   --from-literal=DT_ENDPOINT=$DT_ENDPOINT \
   --from-literal=DT_API_TOKEN=$DT_TOKEN
@@ -295,14 +277,13 @@ kubectl create secret generic dynatrace-otelcol-dt-api-credentials \
 kubectl create secret generic openai-details -n travel-advisor \
   --from-literal=API_KEY=$OPEN_AI_TOKEN
 
+# Install Dynatrace supported distribution of the OpenTelemetry collector
 helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
 helm repo update
 helm upgrade -i dynatrace-collector open-telemetry/opentelemetry-collector -f collector-values.yaml --wait
 
+# Deploy the application
 kubectl apply -f deployment/deployment.yaml -n travel-advisor
-
-# Wait for Dynatrace to be ready
-kubectl -n dynatrace wait --for=condition=Ready pod --all --timeout=10m
 
 # Wait for travel advisor system to be ready
 kubectl -n travel-advisor wait --for=condition=Ready pod --all --timeout=10m
