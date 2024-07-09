@@ -58,7 +58,7 @@ In Dynatrace, press `Ctrl + k` and search for `access tokens`. Choose the first 
 
 ### DT_API_TOKEN
 
-Create a second token with these permissions:
+Create an API token with these permissions:
 
 - Ingest metrics (`metrics.ingest`)
 - Ingest logs (`logs.ingest`)
@@ -66,6 +66,10 @@ Create a second token with these permissions:
 - Ingest OpenTelemetry traces  (`openTelemetryTrace.ingest`)
 - Read metrics (`metrics.read`)
 - Write settings  (`settings.write`)
+
+This token will be used by the OpenTelemetry collector and k6 to send data to Dynatrace.
+The setup script which runs automatically when the codespace is created also uses this to [configure span attribute capture rules in Dynatrace](https://github.com/dynatrace-perfclinics/traveladvisor/blob/82cedeac2bbe2a6e59c5a94f8a798ff81e204660/.devcontainer/deployment.sh#L5)
+this means the relevant OpenTelemetry span attributes will automatically be stored.
 
 ## 🔁 Recap
 
