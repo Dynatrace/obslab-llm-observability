@@ -193,12 +193,30 @@ docker pull semitechnologies/weaviate
 docker run -d -v "/home/ec2-user/wdata:/var/lib/weaviate" -e "PERSISTENCE_DATA_PATH=/var/lib/weaviate" -e "PROMETHEUS_MONITORING_ENABLED=true" -e "AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED=true" -e "DEFAULT_VECTORIZER_MODULE=none" -e "AUTOSCHEMA_ENABLED=false" -e "ENABLE_MODULES=text2vec-openai" -p 9999:8080 -p 2112:2112 semitechnologies/weaviate
 ```
 
-## Deploy K8S
+## Deploy on a Local K8S Cluster
+
+You will need [Docker](https://docs.docker.com/engine/install/) or [Podman](https://podman.io/docs/installation) installed and [Helm](https://helm.sh/docs/intro/install/).
+
+`git clone` this repository locally:
 
 ```bash
-kubectl create namespace travel-advisor
-kubectl apply -f ./deployment/deployment_with_weaviate.yaml -n travel-advisor
-kubectl get services -o wide -n travel-advisor
-kubectl delete deployment travel-advisor -n travel-advisor
-kubectl delete service travel-advisor-service -n travel-advisor
+git clone https://github.com/dynatrace-perfclinics/traveladvisor
+cd traveladvisor
+```
+
+Create a cluster if you do not already have one:
+```bash
+kind create cluster --config .devcontainer/kind-cluster.yml --wait 300s
+```
+
+Customise and set some environment variables
+```
+export DT_ENDPOINT=https://abc12345.live.dynatrace.com
+export DT_TOKEN=TODO
+export OPEN_AI_TOKEN=******
+```
+
+Run the deployment script:
+```bash
+.devcontainer/deployment.sh
 ```
