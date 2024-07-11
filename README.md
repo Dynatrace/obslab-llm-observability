@@ -83,12 +83,9 @@ When you have these pieces of information, you can proceed.
 
 ## 🆙 Time to Fire it up
 
-- On the repo page of Github.com, click the green `Code` button and toggle to `Codespaces` (DO NOT CLICK THE GREEN BUTTON).
-- Click the "three dots" and choose "New with Options".
-- Enter the values you've from above, in the form fields.
-- Create the codespace.
+Click here to start the codespace:
 
-![post creation script](.devcontainer/images/create-codespace.png)
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/dynatrace-perfclinics/traveladvisor)
 
 After the codespaces has started (in a new browser tab), the post creation script should begin. This will install everything and will take a few moments.
 
