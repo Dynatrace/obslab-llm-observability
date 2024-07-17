@@ -124,7 +124,7 @@ So if you search for `Vienna` again, this time, the result will be served from t
 ### Uploading the Dashboards
 This demo comes with several prebuilt dashboards. Do the following in Dynatrace.
 
-- Save the contents of [dynatrace/dashboards/k8s/openai/dashboard.json](dynatrace/dashboards/k8s/openai/dashboard.json) to your computer
+- Save the contents of [dynatrace/dashboards/openai/Travel-Advisor-Overview.json](dynatrace/dashboards/openai/Travel-Advisor-Overview.json) to your computer
 - Press  `Ctrl + k` and search for `dashboards` or select the icon from the left toolbar
 - Select the `Upload` button and upload the JSON file.
 
