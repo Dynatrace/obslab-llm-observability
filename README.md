@@ -113,7 +113,7 @@ Type the name of a destination (eg. `Vienna`) into the search bar and click the 
 
 ### What Happens Next?
 
-- The application will request information for your destination from OpenAI using ChatGPT 3.5.
+- The application will request information for your destination from OpenAI using ChatGPT 4o mini.
 - A result will be returned from OpenAI
 - The result is cached in the weviate vector cache
 
