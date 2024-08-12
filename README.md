@@ -20,7 +20,7 @@ This demo is available in two flavours.
 
 The "standard" demo uses OpenAI's ChatGPT (coupled with an on-cluster Weaviate cache) to look up destination advice for any destination.
 
-The "RAG" version (available on the `rag` branch) will **only** produce destination advice for places the system has explicitly been trained on (the files in the [destinations folder on the `rag` branch](https://github.com/dynatrace-perfclinics/traveladvisor/tree/rag/destinations)). Namely, `Bali` and `Sydney`.
+The "RAG" version (available on the `rag` branch) will **only** produce destination advice for places the system has explicitly been trained on (the files in the [destinations folder on the `rag` branch](https://github.com/dynatrace-perfclinics/obslab-llm-observability/tree/rag/destinations)). Namely, `Bali` and `Sydney`.
 
 The RAG version of the demo mimicks training an LLM on an internal knowledgebase.
 
@@ -68,7 +68,7 @@ Create an API token with these permissions:
 - Write settings  (`settings.write`)
 
 This token will be used by the OpenTelemetry collector and k6 to send data to Dynatrace.
-The setup script which runs automatically when the codespace is created also uses this to [configure span attribute capture rules in Dynatrace](https://github.com/dynatrace-perfclinics/traveladvisor/blob/82cedeac2bbe2a6e59c5a94f8a798ff81e204660/.devcontainer/deployment.sh#L5)
+The setup script which runs automatically when the codespace is created also uses this to [configure span attribute capture rules in Dynatrace](https://github.com/dynatrace-perfclinics/obslab-llm-observability/blob/82cedeac2bbe2a6e59c5a94f8a798ff81e204660/.devcontainer/deployment.sh#L5)
 this means the relevant OpenTelemetry span attributes will automatically be stored.
 
 ## 🔁 Recap
@@ -85,7 +85,7 @@ When you have these pieces of information, you can proceed.
 
 Click here to start the codespace:
 
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/dynatrace-perfclinics/traveladvisor)
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/dynatrace-perfclinics/obslab-llm-observability)
 
 After the codespaces has started (in a new browser tab), the post creation script should begin. This will install everything and will take a few moments.
 
@@ -200,7 +200,7 @@ You will need [Docker](https://docs.docker.com/engine/install/) or [Podman](http
 `git clone` this repository locally:
 
 ```bash
-git clone https://github.com/dynatrace-perfclinics/traveladvisor
+git clone https://github.com/dynatrace-perfclinics/obslab-llm-observability
 cd traveladvisor
 ```
 
