@@ -1,0 +1,15 @@
+site_name: "Dynatrace Observability Lab: LLM Observability"
+nav:
+  - '1. About': index.md
+  - '2. How it works': how-it-works.md
+  - '3. Standard vs. RAG Version': standard-rag-differences.md
+  - '4. Demo Prerequisites': prerequisites.md
+  - '5. Cleanup': cleanup.md
+  - '6. Resources': resources.md
+  - "7. What's Next?": whats-next.md
+theme:
+  name: material
+markdown_extensions:
+  - attr_list 
+  - toc:
+      permalink: '#'
