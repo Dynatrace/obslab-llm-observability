@@ -36,30 +36,10 @@ OTEL_COLLECTOR_ENDPOINT_INSECURE = os.environ.get("OTEL_COLLECTOR_ENDPOINT_INSEC
 
 Traceloop.init(app_name="travel-advisor", api_endpoint=OTEL_COLLECTOR_ENDPOINT)
 
-# Temporary until LLM Semantic conventions
-#  are released: https:#github.com/traceloop/semantic-conventions/blob/4ee7433cd9bbda00bca0f118c1230ff13eac62e5/docs/gen-ai/llm-spans.md
+# https:#github.com/traceloop/semantic-conventions/blob/4ee7433cd9bbda00bca0f118c1230ff13eac62e5/docs/gen-ai/llm-spans.md
 #  Use these as keys. For example:
 #  span.setAttribute(SEMCONV_TMP_GENAI_SYSTEM: "openai");
 
-# Required (according to spec)
-# SEMCONV_TMP_GENAI_REQUEST_MODEL = "gen_ai.request.model"                      # eg. "gpt-4"
-# SEMCONV_TMP_GENAI_SYSTEM = "gen_ai.system"                                    # eg. "openai"
-
-# # Recommended (according to spec)
-# SEMCONV_TMP_GENAI_REQUEST_MAX_TOKENS = "gen_ai.request.max_tokens"            # eg. 100
-# SEMCONV_TMP_GENAI_REQUEST_TEMPERATURE = "gen_ai.request.temperature"          # eg. 0.0
-# SEMCONV_TMP_GENAI_REQUEST_TOP_P = "gen_ai.request.top_p"                      # eg. 1.0
-# SEMCONV_TMP_GENAI_REQUEST_FINISH_REASONS = "gen_ai.request.finish_reasons"    # eg. ["stop"]
-# SEMCONV_TMP_GENAI_RESPONSE_ID = "gen_ai.response.id"                          # eg. "chatcmpl-123"
-# SEMCONV_TMP_GENAI_RESPONSE_MODEL = "gen_ai.response.model"                    # eg. "gpt-4-0613"
-# SEMCONV_TMP_GENAI_USAGE_COMPLETION_TOKENS = "gen_ai.usage.completion_tokens"  # eg. 180
-# SEMCONV_TMP_GENAI_USAGE_PROMPT_TOKENS = "gen_ai.usage.prompt_tokens"          # eg. 100
-
-# # My addition
-# SEMCONV_GENAI_REQUEST_PROMPT = "gen_ai.request.prompt"                        # eg. "Give me destination advice about the city of Sydney"
-# SEMCONV_GENAI_RESPONSE = "gen_ai.response.content"                            # eg. "Explore the Sydney markets, beautiful beaches and Opera House."
-
-#logging.basicConfig(filename='aguvicorn.log', level=logging.INFO)
 logger = logging.getLogger("uvicorn")
 
 ################
