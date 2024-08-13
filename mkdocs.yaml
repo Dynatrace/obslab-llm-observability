@@ -4,9 +4,13 @@ nav:
   - '2. How it works': how-it-works.md
   - '3. Standard vs. RAG Version': standard-rag-differences.md
   - '4. Demo Prerequisites': prerequisites.md
-  - '5. Cleanup': cleanup.md
-  - '6. Resources': resources.md
-  - "7. What's Next?": whats-next.md
+  - '5. Setup': setup.md
+  - '6. Start The Demo': startup.md
+  - '7. Use the Demo': use-demo.md
+  - '8. Visualise Data in Dynatrace': visualise-dt.md
+  - '9. Cleanup': cleanup.md
+  - '10. Resources': resources.md
+  - "11. What's Next?": whats-next.md
 theme:
   name: material
 markdown_extensions:
