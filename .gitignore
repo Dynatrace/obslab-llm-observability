@@ -135,3 +135,6 @@ data/*
 
 # Ignore any files used locally for testing
 *.local
+
+# Ignore GitHub Pages Auto Generated HTML
+site/*
