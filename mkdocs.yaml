@@ -1,4 +1,8 @@
 site_name: "Dynatrace Observability Lab: LLM Observability"
+# Enable link back to GitHub repo
+repo_name: "GitHub"
+repo_url: "https://github.com/dynatrace-perfclinics/obslab-release-validation"
+
 nav:
   - '1. About': index.md
   - '2. How it works': how-it-works.md
@@ -13,7 +17,54 @@ nav:
   - "11. What's Next?": whats-next.md
 theme:
   name: material
+  custom_dir: custom_theme
+  palette:
+
+  # Palette toggle for automatic mode
+  - media: "(prefers-color-scheme)"
+    toggle:
+      icon: material/brightness-auto
+      name: Switch to light mode
+
+  # Palette toggle for light mode
+  - media: "(prefers-color-scheme: light)"
+    scheme: default 
+    toggle:
+      icon: material/brightness-7
+      name: Switch to dark mode
+
+  # Palette toggle for dark mode
+  - media: "(prefers-color-scheme: dark)"
+    scheme: slate
+    toggle:
+      icon: material/brightness-4
+      name: Switch to system preference
 markdown_extensions:
   - attr_list 
   - toc:
       permalink: '#'
+
+# Extra CSS and JS for Progress bar
+extra_css: # relative to docs/
+  - css/style.css
+extra_javascript: # relative to docs/
+  - js/script.js
+plugins:
+  - search
+  - markdownextradata    
+extra:
+  dt:
+    rumagent:
+      snippet: <script type="text/javascript" src="https://js-cdn.dynatrace.com/jstag/145e12d594f/bf64904yne/c4e6e5cac29fff00_complete.js" crossorigin="anonymous"></script>
+  obslab: obslab-llm-observability
+  progressbar:
+    5. Setup:
+      - Create OpenAI API Token
+      - Format Dynatrace URL
+      - Create Dynatrace Token
+    7. Use the Demo:
+      - Search for Vienna
+      - Use Customer Feedback
+    8. Visualise Data in Dynatrace:
+      - Upload Dashboards
+      - View Distributed Traces
