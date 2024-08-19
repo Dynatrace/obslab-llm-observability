@@ -12,4 +12,12 @@ This hands-on is also available as an [on-demand webinar](https://info.dynatrace
 
 ![architecture](images/architecture.jpg)
 
+
+## Compatibility
+
+| Deployment         | Tutorial Compatible |
+|--------------------|---------------------|
+| Dynatrace Managed  | ✔️                 |
+| Dynatrace SaaS     | ✔️                 |
+
 ## [>> Click here to start the tutorial...](how-it-works.md)
