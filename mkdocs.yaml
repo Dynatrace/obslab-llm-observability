@@ -1,7 +1,7 @@
 site_name: "Dynatrace Observability Lab: LLM Observability"
 # Enable link back to GitHub repo
 repo_name: "GitHub"
-repo_url: "https://github.com/dynatrace-perfclinics/obslab-release-validation"
+repo_url: "https://github.com/dynatrace-perfclinics/obslab-llm-observability"
 
 nav:
   - '1. About': index.md
