@@ -1,0 +1,57 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: loadsimulator
+  labels:
+    name: loadsimulator
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: k6-config
+  namespace: loadsimulator
+data:
+  script.js: |
+    import http from 'k6/http';
+    import { randomItem } from 'https://jslib.k6.io/k6-utils/1.2.0/index.js';
+    import { sleep } from 'k6';
+
+    export const options = {
+        vus: 1,
+        duration: '1m',
+    };
+    
+    export default function () {
+        const cities = ['sydney', 'bali', 'new york', 'tokyo', 'chicago', 'london', 'berlin', 'rome', 'amsterdam', 'bangkok'];
+        const city = randomItem(cities);
+        const url = `http://travel-advisor.travel-advisor.svc.cluster.local:80/api/v1/completion?prompt=${city}`;
+        console.log(url);
+        http.get(url);
+        sleep(5);
+    }
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: run-k6
+  namespace: loadsimulator
+spec:
+  schedule: "*/2 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: k6
+              image: grafana/k6:0.53.0
+              args: ["run", "/script.js"]
+              volumeMounts:
+                - name: config-volume
+                  mountPath: /script.js
+                  subPath: script.js
+          volumes:
+            - name: config-volume
+              configMap:
+                name: k6-config
+          restartPolicy: OnFailure
