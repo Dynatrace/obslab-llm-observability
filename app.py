@@ -22,15 +22,20 @@ from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExport
 from traceloop.sdk import Traceloop
 from traceloop.sdk.decorators import workflow
 
-from telemetry.langchain import LangchainInstrumentor
+# disable traceloop telemetry
+os.environ["TRACELOOP_TELEMETRY"] = "false"
 
 
 def read_token():
-    return read_secret('token')
+    return os.environ.get("API_TOKEN", read_secret("token"))
+
+
+def read_endpoint():
+    return os.environ.get("OTEL_ENDPOINT", read_secret("endpoint"))
 
 
 def read_pinecone_key():
-    return read_secret('api-key')
+    return read_secret("api-key")
 
 
 def read_secret(secret: str):
@@ -38,14 +43,15 @@ def read_secret(secret: str):
         with open(f"/etc/secrets/{secret}", "r") as f:
             return f.read().rstrip()
     except Exception as e:
-        print("No token was provided")
+        print(f"No {secret} was provided")
         print(e)
         return ""
 
 
-os.environ['PINECONE_API_KEY'] = read_pinecone_key()
+OTEL_ENDPOINT = read_endpoint()
+if OTEL_ENDPOINT.endswith("/v1/traces"):
+    OTEL_ENDPOINT = OTEL_ENDPOINT[: OTEL_ENDPOINT.find("/v1/traces")]
 
-OTEL_ENDPOINT = os.environ.get("OTEL_ENDPOINT", "http://localhost:4317")
 OLLAMA_ENDPOINT = os.environ.get("OLLAMA_ENDPOINT", "http://localhost:11434")
 
 # GLOBALS
@@ -62,24 +68,27 @@ logger = logging.getLogger(__name__)
 # ################
 # # CONFIGURE OPENTELEMETRY
 
-resource = Resource.create({
-    "service.name": "travel-advisor",
-    "service.version": "0.1.0"
-})
+resource = Resource.create(
+    {"service.name": "travel-advisor", "service.version": "0.2.0"}
+)
 
 TOKEN = read_token()
-headers = {
-    "Authorization": f"Api-Token {TOKEN}"
-}
+headers = {"Authorization": f"Api-Token {TOKEN}"}
 
 provider = TracerProvider(resource=resource)
-processor = BatchSpanProcessor(OTLPSpanExporter(endpoint=f"{OTEL_ENDPOINT}", headers=headers))
+processor = BatchSpanProcessor(
+    OTLPSpanExporter(endpoint=f"{OTEL_ENDPOINT}/v1/traces", headers=headers)
+)
 provider.add_span_processor(processor)
 trace.set_tracer_provider(provider)
-otel_tracer = trace.get_tracer("my.tracer.name")
+otel_tracer = trace.get_tracer("travel-advisor")
 
-LangchainInstrumentor().instrument()
-Traceloop.init(app_name="travel-advisor", api_endpoint=OTEL_ENDPOINT, disable_batch=True, headers=headers)
+Traceloop.init(
+    app_name="travel-advisor",
+    api_endpoint=OTEL_ENDPOINT,
+    disable_batch=True,
+    headers=headers,
+)
 
 
 def prep_system():
@@ -101,24 +110,24 @@ def prep_system():
 
     logger.info("Loading documents from PineCone...")
     vector = PineconeVectorStore.from_documents(
-        documents,
-        index_name="travel-advisor",
-        embedding=embeddings
+        documents, index_name="travel-advisor", embedding=embeddings
     )
     retriever = vector.as_retriever()
 
     logger.info("Initialising Llama LLM...")
     llm = ChatOllama(model=AI_MODEL, base_url=OLLAMA_ENDPOINT)
 
-    prompt = ChatPromptTemplate.from_template("""
-    1. Use the following pieces of context to answer the question as travel advise at the end.
-    2. Keep the answer crisp and limited to 3,4 sentences.
+    prompt = ChatPromptTemplate.from_template(
+        """Answer the following question based only on the provided context:
 
-    Context: {context}
+    <context>
+    {context}
+    </context>
 
     Question: {input}
-    
-    Helpful Answer:""")
+                                              
+    If no context is available respond with 'Sorry, I have no data on {input}'."""
+    )
 
     document_prompt = PromptTemplate(
         input_variables=["page_content", "source"],
@@ -139,6 +148,7 @@ def prep_system():
 
 app = FastAPI()
 
+
 ####################################
 @app.get("/api/v1/completion")
 def submit_completion(prompt: str):
@@ -153,11 +163,17 @@ def submit_completion(prompt: str, span):
         response = retrieval_chain.invoke({"input": prompt}, config={})
 
         # Log information for DQL to grab
-        logger.info(f"Response: {response}. Using RAG. model={AI_MODEL}. prompt={prompt}")
-        return {"message": response['answer']}
+        logger.info(
+            f"Response: {response}. Using RAG. model={AI_MODEL}. prompt={prompt}"
+        )
+        return {"message": response["answer"]}
     else:  # No, or invalid prompt given
-        span.add_event(f"No prompt provided or prompt too long (over {MAX_PROMPT_LENGTH} chars)")
-        return {"message": f"No prompt provided or prompt too long (over {MAX_PROMPT_LENGTH} chars)"}
+        span.add_event(
+            f"No prompt provided or prompt too long (over {MAX_PROMPT_LENGTH} chars)"
+        )
+        return {
+            "message": f"No prompt provided or prompt too long (over {MAX_PROMPT_LENGTH} chars)"
+        }
 
 
 ####################################
@@ -178,7 +194,7 @@ if __name__ == "__main__":
 
     # Mount static files at the root
     app.mount("/", StaticFiles(directory="./public", html=True), name="public")
-    #app.mount("/destinations", StaticFiles(directory="destinations", html = True), name="destinations")
+    # app.mount("/destinations", StaticFiles(directory="destinations", html = True), name="destinations")
 
     # Run the app using uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8080)

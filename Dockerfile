@@ -4,7 +4,8 @@ COPY requirements.txt ./
 RUN pip install -r requirements.txt
 
 COPY app.py  ./
-COPY . .
+COPY ./public ./public
+COPY ./destinations ./destinations
 
 EXPOSE 8080
 
