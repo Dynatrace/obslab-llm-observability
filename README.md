@@ -7,10 +7,7 @@ Uses [Ollama](https://ollama.com/) and [PineCone](https://www.pinecone.io/) to g
 You can follow the official [documentation](https://dynatr.ac/3XKxKEC) to get more insights into how it works.
 Otherwise, you can explore the results using our [playground](https://dynatr.ac/4dnkuLX).
 
-
-<!-- [![See a live demo](http://img.youtube.com/vi/eW2KuWFeZyY/0.jpg)](http://www.youtube.com/watch?v=eW2KuWFeZyY) -->
-
-
+[![See a live demo](http://img.youtube.com/vi/eW2KuWFeZyY/0.jpg)](http://www.youtube.com/watch?v=eW2KuWFeZyY)
 
 ## Configure Pinecone
 
