@@ -55,7 +55,7 @@ metadata:
   name: travel-advisor
   namespace: travel-advisor
 spec:
-  type: LoadBalancer
+  type: NodePort
   selector:
     name: travel-advisor
   ports:
@@ -63,3 +63,4 @@ spec:
       name: http
       targetPort: 8080
       protocol: TCP
+      nodePort: 30100
