@@ -1,10 +1,10 @@
 fastapi == 0.111.0
 uvicorn == 0.29.0
-opentelemetry-api == 1.25.0
-opentelemetry-sdk == 1.25.0
-opentelemetry-semantic-conventions == 0.46b0
-opentelemetry-exporter-otlp-proto-http ==  1.25.0
-traceloop-sdk == 0.22.0
+opentelemetry-api == 1.27.0
+opentelemetry-sdk == 1.27.0
+opentelemetry-semantic-conventions == 0.48b0
+opentelemetry-exporter-otlp-proto-http ==  1.27.0
+traceloop-sdk == 0.30.1
 ollama~=0.3.0
 langchain==0.1.14
 langchain_community == 0.0.30
