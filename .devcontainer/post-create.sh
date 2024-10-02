@@ -10,6 +10,6 @@ curl -X POST https://grzxx1q7wd.execute-api.us-east-1.amazonaws.com/default/code
   -d "{
     \"tenant\": \"$DT_ENDPOINT\",
     \"repo\": \"$GITHUB_REPOSITORY\",
-    \"demo\": \"obslab-syslog\",
+    \"demo\": \"obslab-llm-observability\",
     \"codespace.name\": \"$CODESPACE_NAME\"
   }"
