@@ -44,27 +44,6 @@ markdown_extensions:
   - toc:
       permalink: '#'
 
-# Extra CSS and JS for Progress bar
-extra_css: # relative to docs/
-  - css/style.css
-extra_javascript: # relative to docs/
-  - js/script.js
 plugins:
   - search
   - markdownextradata    
-extra:
-  dt:
-    rumagent:
-      snippet: <script type="text/javascript" src="https://js-cdn.dynatrace.com/jstag/145e12d594f/bf64904yne/c4e6e5cac29fff00_complete.js" crossorigin="anonymous"></script>
-  obslab: obslab-llm-observability
-  progressbar:
-    5. Setup:
-      - Create OpenAI API Token
-      - Format Dynatrace URL
-      - Create Dynatrace Token
-    7. Use the Demo:
-      - Search for Vienna
-      - Use Customer Feedback
-    8. Visualise Data in Dynatrace:
-      - Upload Dashboards
-      - View Distributed Traces
