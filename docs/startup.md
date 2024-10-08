@@ -9,7 +9,7 @@ Choose one of the following options to start the codespace:
 
 ### Launch RAG Version
 
-[![Open "RAG" version in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/dynatrace-perfclinics/obslab-llm-observability?ref=rag){target="_blank"}
+[![Open "RAG" version in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/dynatrace-perfclinics/obslab-llm-observability?ref=ollama-pinecone){target="_blank"}
 
 Leave the top section blank and provide your values in the `Recommended secrets` form.
 

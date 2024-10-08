@@ -3,13 +3,15 @@
 ## Uploading the Dashboards
 This demo comes with several prebuilt dashboards. Do the following in Dynatrace.
 
-- Save the contents of [dynatrace/dashboards/openai/Travel-Advisor-Overview.json](https://github.com/dynatrace-perfclinics/obslab-llm-observability/blob/main/dynatrace/dashboards/openai/Travel-Advisor-Overview.json){target="_blank"} to your computer
+- Save the contents of [dynatrace/dashboards/openai/Travel-Advisor-Overview.json](https://github.com/dynatrace-perfclinics/obslab-llm-observability/blob/main/dynatrace/dashboards/openai/Travel-Advisor-Overview.json){target="_blank"}
+and [dynatrace/dashboards/ollama-pinecone/[AiObs] Travel-Advisor-Overview.json](https://github.com/Dynatrace/obslab-llm-observability/blob/ollama-pinecone/dynatrace/dashboards/ollama-pinecone/%5BAiObs%5D%20Travel-Advisor-Overview.json) to your computer
 - Press  `Ctrl + k` and search for `dashboards` or select the icon from the left toolbar
 - Select the `Upload` button and upload the JSON file.
 
 ![upload button](images/dashboard-upload.png)
 
 ![dashboard image](images/dashboard.png)
+![dashboard image](https://dt-cdn.net/images/ollama-pinecone-dashboard-1713-fa38ba7a33.png)
 
 Repeat this process for all the dashboards inside [dynatrace/dashboards/*](https://github.com/dynatrace-perfclinics/obslab-llm-observability/blob/main/dynatrace/dashboards){target="_blank"}
 

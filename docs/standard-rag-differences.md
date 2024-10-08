@@ -1,14 +1,23 @@
-This demo is available in two flavours.
+This demo is available in two flavors: *standard* and *RAG*.
 
 The "standard" demo uses OpenAI's ChatGPT (coupled with an on-cluster Weaviate cache) to look up destination advice for any destination.
 
-The "RAG" version (available [on the rag branch](https://github.com/dynatrace-perfclinics/obslab-llm-observability/tree/rag){target="_blank"}) will **only** produce destination advice for places the system has explicitly been trained on (the files in the [destinations folder on the `rag` branch](https://github.com/dynatrace-perfclinics/obslab-llm-observability/tree/rag/destinations){target="_blank"}). Namely, `Bali` and `Sydney`.
-
-This is achieved by:
-
-* [Reading each file from disk when the app starts](https://github.com/dynatrace-perfclinics/obslab-llm-observability/blob/a893c0e8e93b29a0ca1b5482cb0589f9bce0b4cc/app.py#L79){target="_blank"}
-* Sending the contents of the [bali and sydney HTML pages](https://github.com/dynatrace-perfclinics/obslab-llm-observability/tree/rag/destinations){target="_blank"} along with each request and [explicitly telling the model to only use the information provided in those documents](https://github.com/dynatrace-perfclinics/obslab-llm-observability/blob/a893c0e8e93b29a0ca1b5482cb0589f9bce0b4cc/app.py#L100){target="_blank"}.
+The "Retrieval-Augmented Generation" (RAG) version (available [on the ollama-pinecone branch](https://github.com/dynatrace-perfclinics/obslab-llm-observability/tree/ollama-pinecone){target="_blank"}) mimicks training an LLM on an internal knowledgebase. 
+It will produce custom destination advice for places the system has explicitly been trained on (the files in the [destinations folder](https://github.com/dynatrace-perfclinics/obslab-llm-observability/tree/ollama-pinecone/destinations){target="_blank"}).
+Namely, `Bali` and `Sydney`. For other locations, the model will provide an answer based on its own knowledge.
+It is based on [Ollama](https://dt-url.net/l843uge) and uses [PineCone](https://dt-url.net/0323urx) as a Vector database. The RAG pipeline is built using [LangChain](https://dt-url.net/6d03u7j). 
 
 The RAG version of the demo mimicks training an LLM on an internal knowledgebase.
+
+![](https://dt-cdn.net/images/architecture-rag-1269-e11f226cf6.jpg)
+
+When the application starts, files inside the [destinations](https://github.com/dynatrace-perfclinics/obslab-llm-observability/tree/ollama-pinecone/destinations){target="_blank"} folder are read, processed, and stored in PineCone for later lookup.
+Afterwards, each request goes through the LangChain RAG pipeline, which performs the following steps:
+
+* It contacts Ollama to produce an embedding of the user input
+* With the embedding, reach out to PineCone to find documents relevant to the user input
+* Use the documents to perform prompt engineering and send it to Ollama to produce the travel recommendation 
+* Prosess the answer received 
+
 
 ## [>> Click here to continue with the exercise](prerequisites.md)

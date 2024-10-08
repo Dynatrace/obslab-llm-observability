@@ -2,6 +2,7 @@ To run this demo you will need:
 
 - A Dynatrace SaaS account ([free trial](https://dynatrace.com/trial){target="_blank"})
 - An OpenAI account with credit added
+- For the RAG version, a (free) PineCone account
 
 ## Why is a Paid OpenAI Account Required?
 
