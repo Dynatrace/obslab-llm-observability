@@ -9,10 +9,10 @@
       
       
       
-        <link rel="prev" href="../how-it-works/">
+        <link rel="prev" href="..">
       
       
-        <link rel="next" href="../prerequisites/">
+        <link rel="next" href="../how-it-works-rag/">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -20,7 +20,7 @@
     
     
       
-        <title>3. Standard vs. RAG Version - Dynatrace Observability Lab: LLM Observability</title>
+        <title>2. How it works (Standard) - Dynatrace Observability Lab: LLM Observability</title>
       
     
     
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              3. Standard vs. RAG Version
+              2. How it works (Standard)
             
           </span>
         </div>
@@ -280,26 +280,6 @@
       
   
   
-  
-  
-    <li class="md-nav__item">
-      <a href="../how-it-works/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    2. How it works
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
     
   
   
@@ -314,7 +294,7 @@
           
   
   <span class="md-ellipsis">
-    3. Standard vs. RAG Version
+    2. How it works (Standard)
   </span>
   
 
@@ -325,7 +305,7 @@
         
   
   <span class="md-ellipsis">
-    3. Standard vs. RAG Version
+    2. How it works (Standard)
   </span>
   
 
@@ -357,6 +337,26 @@
   
 </nav>
       
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-it-works-rag/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3. How it works (RAG)
+  </span>
+  
+
+      </a>
     </li>
   
 
@@ -572,25 +572,19 @@
   
 
 
-  <h1>3. Standard vs. RAG Version</h1>
+  <h1>2. How it works (Standard)</h1>
 
-<p>This demo is available in two flavors: <em>standard</em> and <em>RAG</em>.</p>
-<p>The "standard" demo uses OpenAI's ChatGPT (coupled with an on-cluster Weaviate cache) to look up destination advice for any destination.</p>
-<p>The "Retrieval-Augmented Generation" (RAG) version (available <a href="https://github.com/dynatrace-perfclinics/obslab-llm-observability/tree/ollama-pinecone" target="_blank">on the ollama-pinecone branch</a>) mimicks training an LLM on an internal knowledgebase. 
-It will produce custom destination advice for places the system has explicitly been trained on (the files in the <a href="https://github.com/dynatrace-perfclinics/obslab-llm-observability/tree/ollama-pinecone/destinations" target="_blank">destinations folder</a>).
-Namely, <code>Bali</code> and <code>Sydney</code>. For other locations, the model will provide an answer based on its own knowledge.
-It is based on <a href="https://dt-url.net/l843uge">Ollama</a> and uses <a href="https://dt-url.net/0323urx">PineCone</a> as a Vector database. The RAG pipeline is built using <a href="https://dt-url.net/6d03u7j">LangChain</a>. </p>
-<p>The RAG version of the demo mimicks training an LLM on an internal knowledgebase.</p>
-<p><img alt="" src="https://dt-cdn.net/images/architecture-rag-1269-e11f226cf6.jpg" /></p>
-<p>When the application starts, files inside the <a href="https://github.com/dynatrace-perfclinics/obslab-llm-observability/tree/ollama-pinecone/destinations" target="_blank">destinations</a> folder are read, processed, and stored in PineCone for later lookup.
-Afterwards, each request goes through the LangChain RAG pipeline, which performs the following steps:</p>
+<p>The user interacts with the demo app (travel advisor) on port <code>30100</code>. The app is monitored either via native OpenTelemetry.</p>
+<p>The user enters a destination (eg. <code>Sydney</code>):</p>
 <ul>
-<li>It contacts Ollama to produce an embedding of the user input</li>
-<li>With the embedding, reach out to PineCone to find documents relevant to the user input</li>
-<li>Use the documents to perform prompt engineering and send it to Ollama to produce the travel recommendation </li>
-<li>Prosess the answer received </li>
+<li>The application first checks the cache.<ul>
+<li>If a response for <code>Sydney</code> is found, the response is returned from the cache.</li>
+<li>If a cached response is not available, the application requests advice from the LLM (OpenAI's ChatGPT).</li>
 </ul>
-<h2 id="click-here-to-continue-with-the-exercise"><a href="../prerequisites/">&gt;&gt; Click here to continue with the exercise</a><a class="headerlink" href="#click-here-to-continue-with-the-exercise" title="Permanent link">#</a></h2>
+</li>
+<li>The response is returned and cached so that subsequent calls for the same destination (eg. <code>Sydney</code>) are served from the cache. This saves roundtrips to ChatGPT and thus <code>$</code>.</li>
+</ul>
+<h2 id="click-here-to-continue-with-the-exercise"><a href="../how-it-works-rag/">&gt;&gt; Click here to continue with the exercise</a><a class="headerlink" href="#click-here-to-continue-with-the-exercise" title="Permanent link">#</a></h2>
 
 
 

@@ -10,7 +10,7 @@
       
       
       
-        <link rel="next" href="how-it-works/">
+        <link rel="next" href="how-it-works-standard/">
       
       
       <link rel="icon" href="assets/images/favicon.png">
@@ -307,9 +307,18 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#architecture" class="md-nav__link">
+  <a href="#standard-version-architecture" class="md-nav__link">
     <span class="md-ellipsis">
-      Architecture
+      Standard Version Architecture
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rag-version-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      RAG Version Architecture
     </span>
   </a>
   
@@ -348,11 +357,11 @@
   
   
     <li class="md-nav__item">
-      <a href="how-it-works/" class="md-nav__link">
+      <a href="how-it-works-standard/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    2. How it works
+    2. How it works (Standard)
   </span>
   
 
@@ -368,11 +377,11 @@
   
   
     <li class="md-nav__item">
-      <a href="standard-rag-differences/" class="md-nav__link">
+      <a href="how-it-works-rag/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    3. Standard vs. RAG Version
+    3. How it works (RAG)
   </span>
   
 
@@ -568,9 +577,18 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#architecture" class="md-nav__link">
+  <a href="#standard-version-architecture" class="md-nav__link">
     <span class="md-ellipsis">
-      Architecture
+      Standard Version Architecture
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rag-version-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      RAG Version Architecture
     </span>
   </a>
   
@@ -614,11 +632,20 @@
 
 <h1 id="large-language-model-observability-with-dynatrace">Large Language Model Observability with Dynatrace<a class="headerlink" href="#large-language-model-observability-with-dynatrace" title="Permanent link">#</a></h1>
 <p>Demo application for giving travel advice written in Python. Observability signals by <a href="https://opentelemetry.io" target="_blank">OpenTelemetry</a> and <a href="https://www.traceloop.com/docs/openllmetry/introduction" target="_blank">OpenLLMetry</a>.</p>
-<p>Uses OpenAI ChatGPT to generate advice for a given destination.</p>
+<p>The demo application has two different versions:</p>
+<ul>
+<li>Standard</li>
+<li>Retrieval-augmented generation (RAG)</li>
+</ul>
+<p>The standard version uses OpenAI ChatGPT to generate advice for a given destination and use Weaviate as a cache layer.
+The RAG version uses Ollama to generate advice for a given destination and PineCone
+to fetch additional context to refine the advice provided by Ollama.</p>
 <p><img alt="title" src="images/screenshot.png" /></p>
 <p>This hands-on is also available as an <a href="https://info.dynatrace.com/apac-all-wb-ensure-ai-project-success-with-ai-observability-24973-registration.html" target="_blank">on-demand webinar</a>.</p>
-<h2 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">#</a></h2>
+<h2 id="standard-version-architecture">Standard Version Architecture<a class="headerlink" href="#standard-version-architecture" title="Permanent link">#</a></h2>
 <p><img alt="architecture" src="images/architecture.jpg" /></p>
+<h2 id="rag-version-architecture">RAG Version Architecture<a class="headerlink" href="#rag-version-architecture" title="Permanent link">#</a></h2>
+<p><img alt="architecture" src="images/rag-architecture.jpg" /></p>
 <h2 id="compatibility">Compatibility<a class="headerlink" href="#compatibility" title="Permanent link">#</a></h2>
 <table>
 <thead>
@@ -638,7 +665,7 @@
 </tr>
 </tbody>
 </table>
-<h2 id="click-here-to-start-the-tutorial"><a href="how-it-works/">&gt;&gt; Click here to start the tutorial...</a><a class="headerlink" href="#click-here-to-start-the-tutorial" title="Permanent link">#</a></h2>
+<h2 id="click-here-to-start-the-tutorial"><a href="how-it-works-standard/">&gt;&gt; Click here to start the tutorial...</a><a class="headerlink" href="#click-here-to-start-the-tutorial" title="Permanent link">#</a></h2>
 
 
 
