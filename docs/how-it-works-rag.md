@@ -1,6 +1,3 @@
-This demo is available in two flavors: *standard* and *RAG*.
-
-The "standard" demo uses OpenAI's ChatGPT (coupled with an on-cluster Weaviate cache) to look up destination advice for any destination.
 
 The "Retrieval-Augmented Generation" (RAG) version (available [on the ollama-pinecone branch](https://github.com/dynatrace-perfclinics/obslab-llm-observability/tree/ollama-pinecone){target="_blank"}) mimicks training an LLM on an internal knowledgebase. 
 It will produce custom destination advice for places the system has explicitly been trained on (the files in the [destinations folder](https://github.com/dynatrace-perfclinics/obslab-llm-observability/tree/ollama-pinecone/destinations){target="_blank"}).
