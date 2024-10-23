@@ -35,4 +35,6 @@ This hands-on is also available as an [on-demand webinar](https://info.dynatrace
 | Dynatrace Managed  | ✔️                 |
 | Dynatrace SaaS     | ✔️                 |
 
-## [>> Click here to start the tutorial...](how-it-works-standard.md)
+<div class="grid cards" markdown>
+- [Click Here to Begin :octicons-arrow-right-24:](how-it-works-standard.md)
+</div>

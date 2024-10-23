@@ -14,7 +14,8 @@ Afterwards, each request goes through the LangChain RAG pipeline, which performs
 * It contacts Ollama to produce an embedding of the user input
 * With the embedding, reach out to PineCone to find documents relevant to the user input
 * Use the documents to perform prompt engineering and send it to Ollama to produce the travel recommendation 
-* Prosess the answer received 
+* Process the answer received 
 
-
-## [>> Click here to continue with the exercise](prerequisites.md)
+<div class="grid cards" markdown>
+- [Click Here to Continue :octicons-arrow-right-24:](prerequisites.md)
+</div>

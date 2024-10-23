@@ -7,4 +7,6 @@ The user enters a destination (eg. `Sydney`):
     * If a cached response is not available, the application requests advice from the LLM (OpenAI's ChatGPT).
 * The response is returned and cached so that subsequent calls for the same destination (eg. `Sydney`) are served from the cache. This saves roundtrips to ChatGPT and thus `$`.
 
-## [>> Click here to continue with the exercise](how-it-works-rag.md)
+<div class="grid cards" markdown>
+- [Click Here to Continue :octicons-arrow-right-24:](how-it-works-rag.md)
+</div>

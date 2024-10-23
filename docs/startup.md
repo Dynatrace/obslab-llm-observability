@@ -23,4 +23,6 @@ When the script has completed, a success message will briefly be displayed (it i
 
 You may now proceed.
 
-## [>> Click here to continue with the exercise](use-demo.md)
+<div class="grid cards" markdown>
+- [Click Here to Continue :octicons-arrow-right-24:](use-demo.md)
+</div>

@@ -2,4 +2,6 @@
 
 Head to the resources page to see other LLM Observability content.
 
-## [Resources](resources.md)
+<div class="grid cards" markdown>
+- [Resources](resources.md)
+</div>

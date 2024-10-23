@@ -50,7 +50,9 @@ Notice the cached prompt is `123s`. [The max age (TTL](https://github.com/dynatr
 
 The demo is now complete. Continue to cleanup your environment.
 
-## [>> Cleanup resources to avoid GitHub charges](cleanup.md)
+<div class="grid cards" markdown>
+- [Cleanup resources to avoid GitHub charges](cleanup.md)
+</div>
 
 
 

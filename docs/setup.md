@@ -45,4 +45,6 @@ You should now have `3` pieces of information:
 
 When you have these pieces of information, you can proceed.
 
-## [>> Click here to continue with the exercise](startup.md)
+<div class="grid cards" markdown>
+- [Click Here to Continue :octicons-arrow-right-24:](startup.md)
+</div>

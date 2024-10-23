@@ -26,4 +26,6 @@ Click the 👍 and / or 👎 buttons to indicate your satisfaction level of the 
 
 Clicking these icons will [log a message](https://github.com/dynatrace-perfclinics/obslab-llm-observability/blob/905b38cf85adaafd87f83ff1f40c640206abdb82/app.py#L151){target="_blank"}. This log line is then retrieved and processed using DQL in the "User Sentiment Analysis" section of the dashboard.
 
-## [>> Click here to continue with the exercise](visualise-dt.md)
+<div class="grid cards" markdown>
+- [Click Here to Continue :octicons-arrow-right-24:](visualise-dt.md)
+</div>

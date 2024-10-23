@@ -10,4 +10,6 @@ OpenAI / ChatGPT severely limits the ability for API access if you do not have c
 
 This demo uses [gpt 4o mini](https://platform.openai.com/docs/models/gpt-4o-mini){target="_blank"}. We have developed, tested and demoed this repository hundreds of times and still have money left from the initial $5 credit load.
 
-## [>> Click here to continue with the exercise](setup.md)
+<div class="grid cards" markdown>
+- [Click Here to Continue :octicons-arrow-right-24:](setup.md)
+</div>
