@@ -41,9 +41,18 @@ theme:
       icon: material/brightness-4
       name: Switch to system preference
 markdown_extensions:
-  - attr_list 
+  - attr_list
   - toc:
       permalink: '#'
+  - md_in_html
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.snippets:
+      base_path: ["docs"]
 
 plugins:
   - search

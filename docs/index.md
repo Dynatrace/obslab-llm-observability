@@ -1,5 +1,8 @@
 # Large Language Model Observability with Dynatrace
 
+--8<-- "snippets/disclaimer.md"
+--8<-- "snippets/view-code.md"
+
 Demo application for giving travel advice written in Python. Observability signals by [OpenTelemetry](https://opentelemetry.io){target="_blank"} and [OpenLLMetry](https://www.traceloop.com/docs/openllmetry/introduction){target="_blank"}.
 
 The demo application has two different versions:
