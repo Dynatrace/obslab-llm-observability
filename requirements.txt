@@ -7,7 +7,7 @@ opentelemetry-exporter-otlp-proto-http ==  1.27.0
 traceloop-sdk == 0.30.1
 ollama~=0.3.0
 langchain==0.1.14
-langchain_community == 0.0.30
+langchain_community == 0.3.0
 beautifulsoup4 == 4.12.3
 lxml == 5.2.2
 pinecone==5.1.0
