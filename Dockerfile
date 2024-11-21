@@ -1,11 +1,11 @@
-FROM python:3-bookworm
+FROM python:3.9.20-bookworm
 
 COPY requirements.txt ./
 RUN pip install -r requirements.txt
 
-COPY app.py  ./
 COPY ./public ./public
 COPY ./destinations ./destinations
+COPY app.py  ./
 
 EXPOSE 8080
 

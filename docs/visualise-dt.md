@@ -24,6 +24,13 @@ The application emits distributed traces which can be viewed in Dynatrace:
 
 Remember that only the very first requests for a given destination will go out to OpenAI. So expect many many more cached traces than "live" traces.
 
+### Trace of the RAG Pipeline
+
+Tracing LangChain allows to see all step that the pipeline takes to supply external knowledge to the LLM model.
+In the span attributes, we can observe the prompt crafted by the RAG pipeline with the external documents.
+
+![distributed trace RAG](images/trace-rag.png)
+
 ### Trace with OpenAI
 
 A "full" call to OpenAI looks like this. Notice the long call halfway through the trace to `openai.chat`. These traces take much longer (3 seconds vs. 500ms).

@@ -1,3 +1,5 @@
+venv/
+
 # Editor
 .idea/
 *.iml

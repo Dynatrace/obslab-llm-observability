@@ -6,9 +6,10 @@ opentelemetry-semantic-conventions == 0.48b0
 opentelemetry-exporter-otlp-proto-http ==  1.27.0
 traceloop-sdk == 0.30.1
 ollama~=0.3.0
-langchain==0.1.14
-langchain_community == 0.0.30
+langchain==0.3.7
+langchain-ollama == 0.2.0
 beautifulsoup4 == 4.12.3
 lxml == 5.2.2
 pinecone==5.1.0
-langchain-pinecone==0.1.0
+langchain-pinecone==0.2.0
+langchain_community==0.3.7

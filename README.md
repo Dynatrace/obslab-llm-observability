@@ -4,6 +4,9 @@ Demo application for giving travel advice written in Python. Observability signa
 
 Uses [Ollama](https://ollama.com/) and [PineCone](https://www.pinecone.io/) to generate advice for a given destination.
 
+> **Note**
+> This product is not officially supported by Dynatrace!
+
 ### Try it yourself
 
 * Explore our sample dashboards on the [Dynatrace Playground](https://dynatr.ac/4dnkuLX).

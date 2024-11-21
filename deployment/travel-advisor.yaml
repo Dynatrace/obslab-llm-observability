@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: travel-advisor
-          image: thisthatdc/travel-advisor:v0.2.0
+          image: thisthatdc/travel-advisor:v0.2.2
           ports:
             - name: http
               containerPort: 8080
