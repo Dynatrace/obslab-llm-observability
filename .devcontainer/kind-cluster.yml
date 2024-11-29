@@ -3,6 +3,7 @@ kind: Cluster
 name: kind
 nodes:
 - role: control-plane
+  image: kindest/node:v1.30.0
   kubeadmConfigPatches:
   - |
     kind: InitConfiguration
