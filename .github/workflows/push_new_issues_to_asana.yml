@@ -1,0 +1,30 @@
+name: "Push New Issues to Asana"
+on:
+  issues:
+    types: [opened]
+jobs:
+  Create-Asana-Task-For-Issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Open Asana Issue"
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          ASANA_PAT: ${{ secrets.ASANA_PAT }}
+          ASANA_WORKSPACE: ${{ secrets.ASANA_WORKSPACE }}
+          ASANA_PROJECT: ${{ secrets.ASANA_PROJECT }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_URL: ${{ github.event.issue.html_url }}
+        run: |
+          curl --request POST \
+               --url https://app.asana.com/api/1.0/tasks \
+               --header "accept: application/json" \
+               --header "authorization: Bearer $ASANA_PAT" \
+               --header 'content-type: application/json' \
+               --data "{
+                         \"data\": {
+                           \"workspace\": \"$ASANA_WORKSPACE\",
+                           \"name\": \"[$GITHUB_REPOSITORY] $ISSUE_TITLE\",
+                           \"projects\": [ \"$ASANA_PROJECT\" ],
+                           \"notes\": \"A new issue has been created. \nGo here for full details: $ISSUE_URL\"
+                         }
+                      }"
