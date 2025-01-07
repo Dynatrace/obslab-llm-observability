@@ -1,5 +1,7 @@
 ## 🆙 Time to Fire it up
 
+--8<-- "snippets/codespace-details-warning-box.md"
+
 Choose one of the following options to start the codespace:
 
 
