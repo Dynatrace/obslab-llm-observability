@@ -22,19 +22,11 @@ spec:
     spec:
       containers:
         - name: travel-advisor
-          image: thisthatdc/travel-advisor:v0.2.1
+          image: thisthatdc/travel-advisor:v0.3.0
           ports:
             - name: http
               containerPort: 8080
               protocol: TCP
-          env:
-            - name: OLLAMA_ENDPOINT
-              value: "http://ollama.ollama"
-            - name: PINECONE_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: pinecone
-                  key: api-key
           imagePullPolicy: Always
           volumeMounts:
             - name: secrets
@@ -47,7 +39,7 @@ spec:
               - secret:
                   name: dynatrace
               - secret:
-                  name: pinecone
+                  name: aws
 ---
 apiVersion: v1
 kind: Service
