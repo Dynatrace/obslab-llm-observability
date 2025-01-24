@@ -1,53 +1,41 @@
-# EasyTravel GPT Travel Advisor
+# EasyTravel Bedrock - Travel Advisor
 
 Demo application for giving travel advice written in Python. Observability signals by [OpenTelemetry](https://opentelemetry.io).
 
-Uses [Ollama](https://ollama.com/) and [PineCone](https://www.pinecone.io/) to generate advice for a given destination.
+Uses [Amazon Bedrock](https://aws.amazon.com/bedrock/) to generate advice for a given destination.
 
 > **Note**
 > This product is not officially supported by Dynatrace!
 
 ### Try it yourself
 
-* Explore our sample dashboards on the [Dynatrace Playground](https://dynatr.ac/4dnkuLX).
-* Implement AI observability in your environments with our detailed [Dynatrace Documentation](https://dynatr.ac/3XKxKEC).
+* Explore our sample dashboards on the [Dynatrace Playground](https://dt-url.net/v203wj2).
+* Implement AI observability in your environments with our detailed [Dynatrace Documentation](https://dt-url.net/oi23w9x).
 
-<p align="center">
 
-[![See a live demo](http://img.youtube.com/vi/eW2KuWFeZyY/0.jpg)](http://www.youtube.com/watch?v=eW2KuWFeZyY)
+## Configure Bedrock
 
-</p>
+You can follow the [Amazon Getting Started guide](https://docs.aws.amazon.com/bedrock/latest/userguide/getting-started.html)
+to get access to an Amazon Bedrock foundation model, or deploy your own custom model.
 
-## Configure Pinecone
-
-Head over to https://app.pinecone.io/ and login into your account.
-
-1. Create a new index called `travel-advisor` with the dimensions of **3200** and a `cosine` metric.
-
-   The index will store our knowledge source, which the RAG pipeline will use to augment the LLM's output of the travel recommendation.
-   The parameter 3200 is because for this demo, we are using the embedding model `orca-mini:3b` which returns vector of 3200 elements.
-
-   ![Pinecone Index Creation](https://dt-cdn.net/images/pinecone-index-creation-1061-dab900f5ff.png)
-
-2. After creating and running the index, we can create an API key to connect.
-
-   Follow the [Pinecone documentation on authentication](https://dt-url.net/ji63ugh) to get the API key to connect to your Pinecone index and store it as Kubernetes secrets with the following command:
 
 ## Try it out yourself
 
-[![Open "RAG" version in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/dynatrace-perfclinics/obslab-llm-observability?ref=ollama-pinecone)
+[![Open "RAG" version in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/dynatrace-perfclinics/obslab-llm-observability?ref=aws-bedrock)
 
 ## Developer Information Below
 
 ### Run Locally
 
-Start [Ollama](https://github.com/ollama/ollama) locally by running `ollama serve`. 
-For this example, we'll use a simple model, `orca-mini:3b`.
-You can pull it running `ollama run orca-mini:3b`.
-Afterwards, you can start the application locally by running the following command.
+You can start the application locally by running the following command.
 
 ```bash
-export PINECONE_API_KEY=<YOUR_PINECONE_KEY> 
+export AWS_EMBEDDING_MODEL=<YOUR_AWS_BEDROCK_EMBEDDING_MODEL> 
+export AWS_MODEL=<YOUR_AWS_BEDROCK_MODEL> 
+export AWS_GUARDRAIL_ID=<OTIONAL_YOUR_AWS_BEDROCK_GUARDRAIL> 
+export AWS_DEFAULT_REGION=<YOUR_AWS_REGION> 
+export AWS_ACCESS_KEY_ID=<YOUR_AWS_KEY> 
+export AWS_SECRET_ACCESS_KEY=<YOUR_AWS_SECRET> 
 export OTEL_ENDPOINT=https://<YOUR_DT_TENANT>.live.dynatrace.com/api/v2/otlp
 export API_TOKEN=<YOUR_DT_TOKEN>
 python app.py
@@ -69,7 +57,12 @@ kind create cluster --config .devcontainer/kind-cluster.yml --wait 300s
 Customise and set some environment variables
 
 ```bash
-export PINECONE_API_KEY=<YOUR_PINECONE_KEY> 
+export AWS_EMBEDDING_MODEL=<YOUR_AWS_BEDROCK_EMBEDDING_MODEL> 
+export AWS_MODEL=<YOUR_AWS_BEDROCK_MODEL> 
+export AWS_GUARDRAIL_ID=<OTIONAL_YOUR_AWS_BEDROCK_GUARDRAIL> 
+export AWS_DEFAULT_REGION=<YOUR_AWS_REGION> 
+export AWS_ACCESS_KEY_ID=<YOUR_AWS_KEY> 
+export AWS_SECRET_ACCESS_KEY=<YOUR_AWS_SECRET>
 export DT_ENDPOINT=https://<YOUR_DT_TENANT>.live.dynatrace.com
 export DT_TOKEN=<YOUR_DT_TOKEN>
 ```

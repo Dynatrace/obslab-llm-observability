@@ -1,5 +1,6 @@
 import boto3
 import json
+import os
 
 from models import Model
 from utils.secrets import read_secret
@@ -12,21 +13,28 @@ class Bedrock(Model):
 
     def __init__(self) -> None:
         super().__init__()
-        key = read_secret("aws-key")
-        sec = read_secret("aws-secret")
-        self.__embedding_model = "amazon.titan-embed-text-v1"
-        self.__model = "amazon.titan-text-lite-v1"
+        key = os.environ.get("AWS_ACCESS_KEY_ID", read_secret("aws-key"))
+        sec = os.environ.get("AWS_SECRET_ACCESS_KEY", read_secret("aws-secret"))
+        self.__embedding_model = os.environ.get(
+            "AWS_EMBEDDING_MODEL", "amazon.titan-embed-text-v1"
+        )
+        self.__model = os.environ.get("AWS_MODEL", "amazon.titan-text-lite-v1")
+        self.__guardrail_id = os.environ.get("AWS_GUARDRAIL_ID", "")
 
         self.__client = boto3.client(
             "bedrock-runtime",
-            region_name="eu-central-1",
+            region_name=os.environ.get("AWS_DEFAULT_REGION", "eu-central-1"),
             aws_access_key_id=key,
             aws_secret_access_key=sec,
         )
         self.__langchain_embedding = BedrockEmbeddings(
-            client=self.__client, model_id=self.__embedding_model
+            client=self.__client,
+            model_id=self.__embedding_model,
         )
-        self.__langchain_llm = BedrockLLM(client=self.__client, model_id=self.__model)
+        self.__langchain_llm = BedrockLLM(
+            client=self.__client,
+            model_id=self.__model,
+        )
 
     def embedding(self, prompt):
         native_request = {"inputText": prompt}
@@ -46,13 +54,19 @@ class Bedrock(Model):
             },
         }
         request = json.dumps(native_request)
-        api_response = self.__client.invoke_model(
-            modelId=self.__model,
-            body=request,
-            guardrailIdentifier="5zwrmdlsra2e",  # fow1x931hfc7',
-            guardrailVersion="DRAFT",
-            trace="ENABLED",
-        )
+        if self.__guardrail_id and self.__guardrail_id != "":
+            api_response = self.__client.invoke_model(
+                modelId=self.__model,
+                body=request,
+                guardrailIdentifier=self.__guardrail_id,
+                guardrailVersion="DRAFT",
+                trace="ENABLED",
+            )
+        else:
+            api_response = self.__client.invoke_model(
+                modelId=self.__model,
+                body=request,
+            )
         response = json.loads(api_response["body"].read())
         return response["results"][0]["outputText"]
 

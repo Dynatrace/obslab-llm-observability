@@ -2,9 +2,9 @@ beautifulsoup4 == 4.12.3
 boto3~=1.35.84
 fastapi == 0.115.1
 faiss-cpu == 1.8.0
-langchain==0.3.7
-langchain_community==0.3.7
-langchain-aws == 0.2.2
+langchain==0.3.14
+langchain_community==0.3.14
+langchain-aws == 0.2.10
 lxml == 5.2.2
 traceloop-sdk == 0.35.0
 uvicorn == 0.29.0

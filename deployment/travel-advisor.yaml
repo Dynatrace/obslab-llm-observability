@@ -22,7 +22,38 @@ spec:
     spec:
       containers:
         - name: travel-advisor
-          image: thisthatdc/travel-advisor:v0.3.0
+          image: thisthatdc/travel-advisor:v0.3.0-bedrock
+          env:
+            - name: AWS_DEFAULT_REGION
+              valueFrom:
+                secretKeyRef:
+                  name: aws
+                  key: region
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: aws
+                  key: key
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: aws
+                  key: secret
+            - name: AWS_EMBEDDING_MODEL
+              valueFrom:
+                secretKeyRef:
+                  name: aws
+                  key: embedding
+            - name: AWS_MODEL
+              valueFrom:
+                secretKeyRef:
+                  name: aws
+                  key: model
+            - name: AWS_GUARDRAIL_ID
+              valueFrom:
+                secretKeyRef:
+                  name: aws
+                  key: guardrail
           ports:
             - name: http
               containerPort: 8080

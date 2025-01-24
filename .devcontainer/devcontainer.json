@@ -57,13 +57,28 @@
 	// // Add recommended secrets
 	"secrets": {
 		"DT_ENDPOINT": {
-	 		"description": "eg. https://abc12345.live.dynatrace.com"
+			"description": "eg. https://abc12345.live.dynatrace.com"
 		},
 		"DT_TOKEN": {
-	    	        "description": "Dynatrace API token with these permissions: Ingest metrics, Ingest logs, Ingest events, Ingest OpenTelemetry, Read metrics, Write settings"
+			"description": "Dynatrace API token with these permissions: Ingest metrics, Ingest logs, Ingest events, Ingest OpenTelemetry, Read metrics, Write settings"
 		},
-		"PINECONE_API_KEY": {
-			"description": "PineCone API Token. Go to https://app.pinecone.io/"
+		"AWS_DEFAULT_REGION": {
+			"description": "AWS Region to use"
+		},
+		"AWS_ACCESS_KEY_ID": {
+			"description": "AWS access key associated with an IAM account"
+		},
+		"AWS_SECRET_ACCESS_KEY": {
+			"description": "AWS secret key associated with the access key"
+		},
+		"AWS_EMBEDDING_MODEL": {
+			"description": "Bedrock embedding model to use, eg. amazon.titan-embed-text-v1"
+		},
+		"AWS_MODEL": {
+			"description": "Bedrock AI model to use, eg. amazon.titan-text-lite-v1"
+		},
+		"AWS_GUARDRAIL_ID": {
+			"description": "AWS Guardrail id to protect input and output prompt, eg. 5zwrmdlsra2e"
 		}
 	}
 }
