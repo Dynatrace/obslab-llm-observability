@@ -27,32 +27,32 @@ spec:
             - name: AWS_DEFAULT_REGION
               valueFrom:
                 secretKeyRef:
-                  name: aws
+                  name: bedrock
                   key: region
             - name: AWS_ACCESS_KEY_ID
               valueFrom:
                 secretKeyRef:
-                  name: aws
+                  name: bedrock
                   key: key
             - name: AWS_SECRET_ACCESS_KEY
               valueFrom:
                 secretKeyRef:
-                  name: aws
+                  name: bedrock
                   key: secret
             - name: AWS_EMBEDDING_MODEL
               valueFrom:
                 secretKeyRef:
-                  name: aws
+                  name: bedrock
                   key: embedding
             - name: AWS_MODEL
               valueFrom:
                 secretKeyRef:
-                  name: aws
+                  name: bedrock
                   key: model
             - name: AWS_GUARDRAIL_ID
               valueFrom:
                 secretKeyRef:
-                  name: aws
+                  name: bedrock
                   key: guardrail
           ports:
             - name: http
@@ -70,7 +70,7 @@ spec:
               - secret:
                   name: dynatrace
               - secret:
-                  name: aws
+                  name: bedrock
 ---
 apiVersion: v1
 kind: Service
