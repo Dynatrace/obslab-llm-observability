@@ -21,7 +21,7 @@ to get access to an Amazon Bedrock foundation model, or deploy your own custom m
 
 ## Try it out yourself
 
-[![Open "RAG" version in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/dynatrace-perfclinics/obslab-llm-observability?ref=aws-bedrock)
+[![Open "RAG" version in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/dynatrace-perfclinics/obslab-llm-observability?ref=amazon-bedrock)
 
 ## Developer Information Below
 
