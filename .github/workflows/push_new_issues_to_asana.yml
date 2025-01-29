@@ -15,7 +15,7 @@ jobs:
           ISSUE_TITLE: ${{ github.event.issue.title }}
           ISSUE_URL: ${{ github.event.issue.html_url }}
         run: |
-          curl --request POST \
+          curl --silent --output /dev/null --request POST \
                --url https://app.asana.com/api/1.0/tasks \
                --header "accept: application/json" \
                --header "authorization: Bearer $ASANA_PAT" \
