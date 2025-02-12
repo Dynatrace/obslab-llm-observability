@@ -1,5 +1,7 @@
 # What's Next?
 
+--8<-- "snippets/bizevent-whats-next.js"
+
 How Dynatrace:
 
 * Works with [Traceloop OpenLLMetry](https://docs.dynatrace.com/docs/analyze-explore-automate/dynatrace-for-ai-observability/ai-data-ingest/traceloop-openllmetry){target=_blank}

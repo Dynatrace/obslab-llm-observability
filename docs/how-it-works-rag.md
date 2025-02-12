@@ -1,4 +1,6 @@
 
+--8<-- "snippets/bizevent-how-it-works-rag.js"
+
 The "Retrieval-Augmented Generation" (RAG) version (available 
 [on the ollama-pinecone branch](https://github.com/dynatrace-perfclinics/obslab-llm-observability/tree/ollama-pinecone){target="_blank"})
 mimicks training an LLM on an internal knowledgebase. 

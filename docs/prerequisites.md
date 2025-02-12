@@ -1,3 +1,5 @@
+--8<-- "snippets/bizevent-demo-prerequisites.js"
+
 To run this demo you will need:
 
 - A Dynatrace SaaS account ([free trial](https://dynatrace.com/trial){target="_blank"})

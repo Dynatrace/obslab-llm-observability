@@ -1,5 +1,7 @@
 ## Accessing and Using Demo
 
+--8<-- "snippets/bizevent-use-the-demo.js"
+
 In the codespace, switch to the `Ports` tab. Right click port `30100` and choose `Open in Browser`
 
 ![ports open in browser](images/ports-open-in-browser.png)

@@ -1,3 +1,5 @@
+--8<-- "snippets/bizevent-setup.js"
+
 ## Create OpenAI API Token
 
 Go to [https://platform.openai.com/api-keys](https://platform.openai.com/api-keys){target="_blank"} and create a new API Key.

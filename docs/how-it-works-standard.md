@@ -1,3 +1,5 @@
+--8<-- "snippets/bizevent-how-it-works-standard.js"
+
 The user interacts with the demo app (travel advisor) on port `30100`. The app is monitored either via native OpenTelemetry.
 
 The user enters a destination (eg. `Sydney`):

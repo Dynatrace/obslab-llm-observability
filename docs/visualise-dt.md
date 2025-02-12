@@ -1,5 +1,7 @@
 # Visualising Data in Dynatrace
 
+--8<-- "snippets/bizevent-visualise-data.js"
+
 ## Uploading the Dashboards
 This demo comes with several prebuilt dashboards. Do the following in Dynatrace.
 

@@ -1,6 +1,7 @@
 ## 🆙 Time to Fire it up
 
 --8<-- "snippets/codespace-details-warning-box.md"
+--8<-- "snippets/bizevent-start-the-demo.js"
 
 Choose one of the following options to start the codespace:
 

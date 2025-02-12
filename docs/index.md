@@ -2,6 +2,7 @@
 
 --8<-- "snippets/disclaimer.md"
 --8<-- "snippets/view-code.md"
+--8<-- "snippets/bizevent-homepage.js"
 
 Demo application for giving travel advice written in Python. Observability signals by [OpenTelemetry](https://opentelemetry.io){target="_blank"} and [OpenLLMetry](https://www.traceloop.com/docs/openllmetry/introduction){target="_blank"}.
 
