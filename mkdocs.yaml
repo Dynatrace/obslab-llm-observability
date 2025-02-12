@@ -17,6 +17,7 @@ nav:
   - "11. What's Next?": whats-next.md
 theme:
   name: material
+  custom_dir: docs/overrides
   features:
     - content.code.copy
   palette:
