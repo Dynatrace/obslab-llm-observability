@@ -639,6 +639,12 @@
   <h1>7. Use the Demo</h1>
 
 <h2 id="accessing-and-using-demo">Accessing and Using Demo<a class="headerlink" href="#accessing-and-using-demo" title="Permanent link">#</a></h2>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  dynatrace.sendBizEvent('page_load', {"page": "7. use demo"});
+});
+</script>
+
 <p>In the codespace, switch to the <code>Ports</code> tab. Right click port <code>30100</code> and choose <code>Open in Browser</code></p>
 <p><img alt="ports open in browser" src="../images/ports-open-in-browser.png" /></p>
 <p>A new browser tab will open and you should see the demo.</p>

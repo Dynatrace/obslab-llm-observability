@@ -656,6 +656,12 @@
 
   <h1>5. Setup</h1>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  dynatrace.sendBizEvent('page_load', {"page": "5. setup"});
+});
+</script>
+
 <h2 id="create-openai-api-token">Create OpenAI API Token<a class="headerlink" href="#create-openai-api-token" title="Permanent link">#</a></h2>
 <p>Go to <a href="https://platform.openai.com/api-keys" target="_blank">https://platform.openai.com/api-keys</a> and create a new API Key.</p>
 <h2 id="format-dynatrace-url">Format Dynatrace URL<a class="headerlink" href="#format-dynatrace-url" title="Permanent link">#</a></h2>

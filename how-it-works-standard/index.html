@@ -513,6 +513,12 @@
 
   <h1>2. How it works (Standard)</h1>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  dynatrace.sendBizEvent('page_load', {"page": "2. how it works (standard)"});
+});
+</script>
+
 <p>The user interacts with the demo app (travel advisor) on port <code>30100</code>. The app is monitored either via native OpenTelemetry.</p>
 <p>The user enters a destination (eg. <code>Sydney</code>):</p>
 <ul>

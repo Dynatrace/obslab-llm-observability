@@ -626,6 +626,12 @@
 <p>During the next step you will be prompted for some details.</p>
 <p>Enter the relevant details in the GitHub form.</p>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  dynatrace.sendBizEvent('page_load', {"page": "6. start demo"});
+});
+</script>
+
 <p>Choose one of the following options to start the codespace:</p>
 <h3 id="launch-standard-version">Launch Standard Version<a class="headerlink" href="#launch-standard-version" title="Permanent link">#</a></h3>
 <p><a href="https://codespaces.new/dynatrace-perfclinics/obslab-llm-observability?ref=main" target="_blank"><img alt="Open &quot;standard&quot; version in GitHub Codespaces" src="https://github.com/codespaces/badge.svg" /></a></p>

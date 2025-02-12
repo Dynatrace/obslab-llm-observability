@@ -620,6 +620,12 @@
 <p class="admonition-title">View the Code</p>
 <p>The code for this repository is hosted on GitHub. Click the "View Code on GitHub" link above.</p>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  dynatrace.sendBizEvent('page_load', {"page": "1. homepage"});
+});
+</script>
+
 <p>Demo application for giving travel advice written in Python. Observability signals by <a href="https://opentelemetry.io" target="_blank">OpenTelemetry</a> and <a href="https://www.traceloop.com/docs/openllmetry/introduction" target="_blank">OpenLLMetry</a>.</p>
 <p>The demo application has two different versions:</p>
 <ul>
