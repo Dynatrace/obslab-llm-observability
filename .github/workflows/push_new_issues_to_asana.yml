@@ -12,7 +12,6 @@ jobs:
           ASANA_PAT: ${{ secrets.ASANA_PAT }}
           ASANA_WORKSPACE: ${{ secrets.ASANA_WORKSPACE }}
           ASANA_PROJECT: ${{ secrets.ASANA_PROJECT }}
-          ISSUE_TITLE: ${{ github.event.issue.title }}
           ISSUE_URL: ${{ github.event.issue.html_url }}
         run: |
           curl --silent --output /dev/null --request POST \
@@ -23,7 +22,7 @@ jobs:
                --data "{
                          \"data\": {
                            \"workspace\": \"$ASANA_WORKSPACE\",
-                           \"name\": \"[$GITHUB_REPOSITORY] $ISSUE_TITLE\",
+                           \"name\": \"[$GITHUB_REPOSITORY] New Issue\",
                            \"projects\": [ \"$ASANA_PROJECT\" ],
                            \"notes\": \"A new issue has been created. \nGo here for full details: $ISSUE_URL\"
                          }
