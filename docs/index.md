@@ -27,14 +27,6 @@ This hands-on is also available as an [on-demand webinar](https://info.dynatrace
 
 ![architecture](images/rag-architecture.jpg)
 
-
-## Compatibility
-
-| Deployment         | Tutorial Compatible |
-|--------------------|---------------------|
-| Dynatrace Managed  | ✔️                 |
-| Dynatrace SaaS     | ✔️                 |
-
 <div class="grid cards" markdown>
 - [Click Here to Begin :octicons-arrow-right-24:](how-it-works-standard.md)
 </div>
