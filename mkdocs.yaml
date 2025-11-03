@@ -1,27 +1,28 @@
-site_name: "Dynatrace Observability Lab: LLM Observability"
-# Enable link back to GitHub repo
-repo_name: "GitHub"
-repo_url: "https://github.com/dynatrace/obslab-llm-observability"
-
+site_name: "Dynatrace Enablement Lab: Gen AI & LLM Observability"
+repo_name: "View Code on GitHub"
+repo_url: "https://github.com/dynatrace-wwse/enablement-gen-ai-llm-observability"
 nav:
   - '1. About': index.md
-  - '2. How it works': how-it-works.md
-  - '3. Standard vs. RAG Version': standard-rag-differences.md
-  - '4. Demo Prerequisites': prerequisites.md
-  - '5. Setup': setup.md
-  - '6. Start The Demo': startup.md
-  - '7. Use the Demo': use-demo.md
-  - '8. Visualise Data in Dynatrace': visualise-dt.md
-  - '9. Cleanup': cleanup.md
-  - '10. Resources': resources.md
-  - "11. What's Next?": whats-next.md
+  - '2. Getting started': 2-getting-started.md
+  - '3. Codespaces': 3-codespaces.md
+  - '4. Content': 4-content.md
+  - '5. Direct Chat': 5-direct.md
+  - '6. RAG': 6-rag.md
+  - '7. Agentic': 7-agentic.md
+  - '8. Cleanup': cleanup.md
+  - '9. Resources': resources.md
+  - "10. What's next?": whats-next.md
 theme:
   name: material
-  custom_dir: custom_theme
+  custom_dir: docs/overrides
+  logo: https://cdn.bfldr.com/B686QPH3/at/w5hnjzb32k5wcrcxnwcx4ckg/Dynatrace_signet_RGB_HTML.svg?auto=webp&format=pngg
+  features:
+    - content.code.copy
+    
   palette:
-
   # Palette toggle for automatic mode
   - media: "(prefers-color-scheme)"
+    primary: deep-purple
     toggle:
       icon: material/brightness-auto
       name: Switch to light mode
@@ -29,6 +30,7 @@ theme:
   # Palette toggle for light mode
   - media: "(prefers-color-scheme: light)"
     scheme: default 
+    primary: deep-purple
     toggle:
       icon: material/brightness-7
       name: Switch to dark mode
@@ -36,14 +38,23 @@ theme:
   # Palette toggle for dark mode
   - media: "(prefers-color-scheme: dark)"
     scheme: slate
+    primary: deep-purple
     toggle:
       icon: material/brightness-4
       name: Switch to system preference
+
 markdown_extensions:
-  - attr_list 
   - toc:
       permalink: '#'
-
+  - md_in_html
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.snippets:
+      base_path: ["docs"]
+  - attr_list
 plugins:
-  - search
-  - markdownextradata    
+    - search

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block libs %}
+  <!-- Add scripts that need to run before here -->
+  {{ super() }}
+  <!-- Add scripts that need to run afterwards here -->
+   <!-- BeforeGoLive: Replace Agentless RUM Snippet
+    1. Create an agentless application in Dynatrace from with convention 'dynatrace-wwse/repositoryname'
+    2. https://geu80787.apps.dynatrace.com/ui/apps/dynatrace.classic.deploy.agentless/#install/agentless;gtf=-2h;gf=all
+    -->
+   <script type="text/javascript" src="https://js-cdn.dynatrace.com/jstag/1612cf70810/bf81393wlb/e4d90cc9ebfea2e7_complete.js" crossorigin="anonymous"></script>
+{% endblock %}

@@ -1,6 +1,25 @@
 apiVersion: kind.x-k8s.io/v1alpha4
 kind: Cluster
 name: kind
+#containerdConfigPatches:
+#  - |-
+#    [plugins."io.containerd.grpc.v1.cri".registry]
+#      [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
+#        endpoint = ["https://registry-1.docker.io"]
+#      [plugins."io.containerd.grpc.v1.cri".registry.mirrors."localhost:5000"]
+#        endpoint = ["http://localhost:5000"]
+#      [plugins."io.containerd.grpc.v1.cri".registry.mirrors."*"]
+#        endpoint = ["https://registry-1.docker.io"]
+networking:
+  # WARNING: It is _strongly_ recommended that you keep this the default
+  # (127.0.0.1) for security reasons. However it is possible to change this.
+  # Since is a training cluster, we open the internal API server to the world.
+  # This is not recommended for production clusters. 
+  apiServerAddress: "0.0.0.0"
+  # By default the API server listens on a random open port.
+  # You may choose a specific port but probably don't need to in most cases.
+  # Using a random port makes it easier to spin up multiple clusters.
+  apiServerPort: 6443
 nodes:
 - role: control-plane
   image: kindest/node:v1.30.0
@@ -10,12 +29,13 @@ nodes:
     nodeRegistration:
       kubeletExtraArgs:
         node-labels: "ingress-ready=true"
+  extraMounts:
+  - hostPath: /
+    containerPath: /mnt/root
   extraPortMappings:
-  - hostPort: 80
-    containerPort: 80
-  - hostPort: 8080
-    containerPort: 8080
-    protocol: TCP
   - hostPort: 30100
     containerPort: 30100
-    protocol: TCP
+  - hostPort: 30200
+    containerPort: 30200
+  - hostPort: 30300
+    containerPort: 30300

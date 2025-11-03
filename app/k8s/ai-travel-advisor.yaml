@@ -1,0 +1,57 @@
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-travel-advisor
+  namespace: ai-travel-advisor
+spec:
+  selector:
+    matchLabels:
+      name: ai-travel-advisor
+  template:
+    metadata:
+      labels:
+        name: ai-travel-advisor
+    spec:
+      containers:
+        - name: ai-travel-advisor
+          image: thisthatdc/ai-travel-advisor:v0.1.1
+          ports:
+            - name: http
+              containerPort: 8082
+              protocol: TCP
+          env:
+            - name: OLLAMA_ENDPOINT
+              value: "http://ollama.ai-travel-advisor.svc.cluster.local:11434"
+            - name: WEAVIATE_ENDPOINT
+              value: "weaviate.ai-travel-advisor.svc.cluster.local"
+            - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+              value: "delta"
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: secrets
+              readOnly: true
+              mountPath: "/etc/secrets"
+      volumes:
+        - name: secrets
+          projected:
+            sources:
+              - secret:
+                  name: dynatrace
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ai-travel-advisor
+  namespace: ai-travel-advisor
+spec:
+  type: NodePort
+  selector:
+    name: ai-travel-advisor
+  ports:
+    - port: 80
+      name: http
+      targetPort: 8082
+      protocol: TCP
+      nodePort: 30100

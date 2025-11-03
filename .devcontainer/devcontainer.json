@@ -1,69 +1,58 @@
-// For format details, see https://aka.ms/devcontainer.json. For config options, see the
-// README at: https://github.com/devcontainers/templates/tree/main/src/kubernetes-helm
 {
-	"name": "Kubernetes-in-Codespaces",
-	"dockerFile": "Dockerfile",
-	//"name": "Kubernetes - Local Configuration",
-	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	//"image": "mcr.microsoft.com/devcontainers/base:bullseye",
+  "name": "Dynatrace Enablement Container",
+  // Pulling the image from the Dockerhub, runs on AMD64 and ARM64. Pulling is normally faster.
+  "image":"shinojosa/dt-enablement:v1.2",
+  /*
+  // Building the image from the Dockerfile
+  "build": {
+    "dockerfile": "Dockerfile"
+    },
+    */
+  // When running locally we pass the 'secrets' as env variables via runArgs "--env-file",".devcontainer/runlocal/.env"
+  "runArgs": ["--init", "--privileged", "--network=host"],
+  "mounts": ["source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"],
+  // Entrypoint and CMD are overwritten by VSCode
+  "overrideCommand": false,
 
-	// do not change these if you want Docker in Docker support
-	"runArgs": ["--init", "--privileged", "--network=host"],
-	"mounts": [ "source=/var/run/docker.sock,target=/var/run/docker-host.sock,type=bind" ],
-	"overrideCommand": false,
-
-	// some base images require a specific user name
+  // some base images require a specific user name.
 	"remoteUser": "vscode",
+  
+  "postCreateCommand": "./.devcontainer/post-create.sh",
 
-	// Install extensions
-	"customizations": {
-		"vscode": {	
-			// Set container specific settings
+  "postStartCommand": "./.devcontainer/post-start.sh",
+  
+  "features": {},
+  "customizations": {
+    "vscode": {
+      // Set container specific settings
 			"settings": {
 				"terminal.integrated.defaultProfile.linux": "zsh"
-			},			
-			"extensions": [
-				"ms-azuretools.vscode-docker",
-				"ms-kubernetes-tools.vscode-kubernetes-tools",
-				"davidanson.vscode-markdownlint",
-				"gruntfuggly.todo-tree",
-				"mutantdino.resourcemonitor",
-				"humao.rest-client",
-				"ms-vscode.makefile-tools"
-			]
-		}
-	},
-
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+			},
+      "extensions": [ ]
+    }
+  },
+  	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	"forwardPorts": [
 		30100
 	],
-
 	// add labels
 	"portsAttributes": {
-		"30100": { "label": "traveladvisor User Interface" }
+		"30100": { "label": "Application Web UI" }
 	},
-
+  // minimal CPU when running DT components and apps.
 	"hostRequirements": {
-		"cpus": 2
-	},
-
-	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": ".devcontainer/post-create.sh",
-
-	// Use 'postStartCommand' to run commands after the container starts.
-    "postStartCommand": ".devcontainer/post-start.sh",
-
-	// // Add recommended secrets
-	"secrets": {
-	 	  "DT_ENDPOINT": {
-	 		"description": "eg. https://abc12345.live.dynatrace.com"
-		},
-		  "DT_TOKEN": {
-	    	        "description": "Dynatrace API token with these permissions: Ingest metrics, Ingest logs, Ingest events, Ingest OpenTelemetry, Read metrics, Write settings"
-		},
-		  "OPEN_AI_TOKEN": {
-			"description": "OpenAI API Token. Go to https://platform.openai.com/api-keys"
-		}
+		"cpus": 4
 	}
+  /*
+  // Add recommended secrets 
+  */
+  ,
+    "secrets": {
+		    "DT_ENVIRONMENT": {
+			    "description": "URL to your Dynatrace Platform eg. https://abc123.apps.dynatrace.com or for sprint -> https://abc123.sprint.apps.dynatracelabs.com"
+	 	    },
+		    "DT_TOKEN": {
+			    "description": "Dynatrace API token with these permissions: Ingest metrics, Ingest logs, Ingest events, Ingest OpenTelemetry, Read metrics, Write settings"
+	 	    }
+    }
 }

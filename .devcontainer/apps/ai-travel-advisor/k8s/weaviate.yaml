@@ -1,0 +1,82 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: weaviate-pvc
+  namespace: ai-travel-advisor
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 8Gi
+  storageClassName: "standard"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: weaviate
+  namespace: ai-travel-advisor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: weaviate
+  template:
+    metadata:
+      labels:
+        app: weaviate
+      annotations:
+        metrics.dynatrace.com/scrape: "true"
+        metrics.dynatrace.com/port: "2112"
+        metrics.dynatrace.com/path: "/metrics"
+    spec:
+      volumes:
+      - name: weaviate-volume
+        persistentVolumeClaim:
+          claimName: weaviate-pvc
+      containers:
+      - name: weaviate
+        image: cr.weaviate.io/semitechnologies/weaviate:1.30.1
+        ports:
+        - containerPort: 8080
+        - containerPort: 2112
+        - containerPort: 50051
+        volumeMounts:
+        - name: weaviate-volume
+          mountPath: /var/lib/weaviate
+        env:
+        - name: PROMETHEUS_MONITORING_ENABLED
+          value: "true"
+        - name: AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED
+          value: "true"
+        - name: ENABLE_API_BASED_MODULES
+          value: "true"
+        - name: AUTOSCHEMA_ENABLED
+          value: "false"
+        - name: ENABLE_MODULES
+          value: "text2vec-ollama,generative-ollama"
+        - name: PERSISTENCE_DATA_PATH
+          value: "/var/lib/weaviate"
+        resources:
+          limits:
+            cpu: "0.1"     # Maximum CPU usage
+            memory: "512Mi"  # Maximum memory usage
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: weaviate
+  namespace: ai-travel-advisor
+spec:
+  selector:
+    app: weaviate
+  ports:
+  - protocol: TCP
+    port: 8080
+    name: web
+    targetPort: 8080  # container port
+  - protocol: TCP
+    port: 50051
+    name: grpc
+    targetPort: 50051  # container port
+

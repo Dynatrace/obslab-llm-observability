@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: accountservice
+spec:
+  selector:
+    matchLabels:
+      app: accountservice
+  template:
+    metadata:
+      labels:
+        app: accountservice
+    spec:
+      containers:
+        - name: accountservice
+          image: gcr.io/dynatrace-demoability/easytrade/accountservice:f505fb9
+          ports:
+            - containerPort: 8080
+          env:
+            - name: MANAGER_HOSTANDPORT
+              value: "manager:80"
+            - name: PROXY_PREFIX 
+              value: "accountservice"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 300Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: accountservice
+spec:
+  type: ClusterIP
+  selector:
+    app: accountservice
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080

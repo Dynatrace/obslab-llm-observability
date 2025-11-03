@@ -1,0 +1,14 @@
+spec:
+  template:
+    metadata:
+      annotations:
+        oneagent.dynatrace.com/inject: "false"   
+        metadata.dynatrace.com/process.technology: "cpp"  
+    spec:
+      containers:
+        - name: currencyservice
+          imagePullPolicy: Always
+          env:
+            - name: OTEL_COLLECTOR_NAME
+              value: 'dynatrace-otel-gateway-collector' # TODO: should be 'localhost' for sidecar but getting a strange error, but according to otc logs sending to the OpenTelemetry Collector sidecar still seems to work 
+                                                        # [Error] File: /opentelemetry-cpp/exporters/otlp/src/otlp_grpc_log_record_exporter.cc:128 [OTLP LOG GRPC Exporter] Export() failed: failed to connect to all addresses; last error: UNKNOWN: ipv4:127.0.0.1:4317: Failed to connect to remote host: Connection refused  

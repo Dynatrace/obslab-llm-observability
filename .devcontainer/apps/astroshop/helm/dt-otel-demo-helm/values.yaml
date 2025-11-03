@@ -1,0 +1,1090 @@
+ingressHostUrl: "astroshop-frontendproxy"
+#ingressHostUrl: "astroshop-frontendproxy.astroshop.svc.cluster.local"
+#ingressWhitelistSourceRange: 10.224.0.0/12,195.50.84.64/27,83.164.160.102/32,83.164.153.224/28,80.80.253.56/32,213.143.108.80/29,157.25.19.96/27,82.177.196.146/32,144.121.39.106/32,50.221.151.250/32,50.247.212.21/32,50.219.104.42/32,71.24.151.161/32,12.188.200.30/32,64.85.148.114/32,216.176.22.146/32,50.219.104.50/32,50.76.51.61/32
+#prodCatalogPvcStorageClass: azureblob-nfs-premium
+#prodCatalogPvcSize: 5Gi
+collector_tenant_endpoint: donotstore
+collector_tenant_token: donotstore
+#lambda_url: "https://lambdaurl.execute-api.us-east-1.amazonaws.com/Dev"
+
+opentelemetry-demo:
+  default:
+    envOverrides:
+      - name: OTEL_COLLECTOR_NAME
+        value: '{{ .Release.Name }}-otel-gateway-collector'
+
+  components:
+    accountingService:
+      enabled: true
+      imageOverride:
+        repository: docker.io/shinojosa/astroshop
+        tag: 1.12.0-accountingservice
+      useDefault:
+        env: true
+      podAnnotations:
+        oneagent.dynatrace.com/inject: "true"
+        metadata.dynatrace.com/process.technology: ".NET"
+      envOverrides:
+        - name: DT_LOGLEVELCON # https://www.dynatrace.com/support/help/shortlink/agent-logging
+          value: "" # info
+        - name: DT_LOGCON_PROC
+          value: "" # stdout
+        - name: DT_LOGGING_DESTINATION
+          value: "" # stdout 
+        - name: DT_LOGGING_DOTNET_FLAGS
+          value: ''  # Exporter=true,SpanProcessor=true,Propagator=true,Core=true
+        - name: OTEL_DOTNET_AUTO_INSTRUMENTATION_ENABLED
+          value: 'false' # Avoid duplicate spans from OA and Otel -  https://opentelemetry.io/docs/zero-code/net/instrumentations/
+        - name: OTEL_TRACES_EXPORTER
+          value: 'none' # 'console', 'none', 'otlp'
+        - name: OTEL_LOGS_EXPORTER
+          value: 'none' # 'console', 'none', 'otlp'
+        - name: OTEL_METRICS_EXPORTER
+          value: 'console,otlp' # 'console', 'none', 'otlp'
+      initContainers:
+        - name: wait-for-kafka
+          image: busybox:latest
+          command: ['sh', '-c', 'until nc -z -v -w30 {{ include "otel-demo.name" . }}-kafka 9092; do echo waiting for kafka; sleep 2; done;']
+      resources:
+        limits:
+          memory: 512Mi  # To run OneAgent we reccomend 512Mi, Original 120Mi - https://docs.dynatrace.com/docs/setup-and-configuration/dynatrace-oneagent/memory-requirements
+
+    adService:
+      enabled: true
+      useDefault:
+        env: true
+      imageOverride:
+        repository: docker.io/shinojosa/astroshop
+        tag: 1.12.0-adservice
+      podAnnotations:
+        oneagent.dynatrace.com/inject: "true"
+        metadata.dynatrace.com/process.technology: "Java"
+      envOverrides:
+        - name: DT_LOGLEVELCON # https://www.dynatrace.com/support/help/shortlink/agent-logging
+          value: "" # info
+        - name: DT_LOGCON_PROC
+          value: "" # stdout
+        - name: DT_LOGGING_DESTINATION
+          value: "" # stdout 
+        - name: DT_LOGGING_JAVA_FLAGS
+          value: ''  # Exporter=true,SpanProcessor=true,Propagator=true,Core=true
+        - name: JAVA_TOOL_OPTIONS
+          value: '' # '-javaagent:/usr/src/app/opentelemetry-javaagent.jar' # - Duplicate spans from OA and Otel are avoided automatically - https://docs.dynatrace.com/docs/shortlink/opentelemetry-oneagent#java-span-dropping
+        - name: OTEL_TRACES_EXPORTER
+          value: 'none' # 'console', 'none', 'otlp'
+        - name: OTEL_LOGS_EXPORTER
+          value: 'none' # 'console', 'none', 'otlp'
+        - name: OTEL_METRICS_EXPORTER
+          value: 'console,otlp' # 'console', 'none', 'otlp'
+      resources:
+        limits:
+          memory: 512Mi  # To run OneAgent we reccomend 512Mi, Original 300Mi - https://docs.dynatrace.com/docs/setup-and-configuration/dynatrace-oneagent/memory-requirements
+
+    cartService:
+      enabled: true
+      useDefault:
+        env: true
+      imageOverride:
+        repository: docker.io/shinojosa/astroshop
+        tag: 1.12.0-cartservice
+      podAnnotations:
+        oneagent.dynatrace.com/inject: "true"
+        metadata.dynatrace.com/process.technology: ".NET" 
+      envOverrides:
+        - name: DT_LOGLEVELCON # https://www.dynatrace.com/support/help/shortlink/agent-logging
+          value: "" # info
+        - name: DT_LOGCON_PROC
+          value: "" # stdout
+        - name: DT_LOGGING_DESTINATION
+          value: "" # stdout 
+        - name: DT_LOGGING_DOTNET_FLAGS
+          value: '' # Exporter=true,SpanProcessor=true,Propagator=true,Core=true
+        - name: OTEL_DOTNET_AUTO_INSTRUMENTATION_ENABLED
+          value: 'false' # Avoid duplicate spans from OA and Otel -  https://opentelemetry.io/docs/zero-code/net/instrumentations/
+        - name: OTEL_TRACES_EXPORTER
+          value: 'none' # 'console', 'none', 'otlp'
+        - name: OTEL_LOGS_EXPORTER
+          value: 'none' # 'console', 'none', 'otlp'
+        - name: OTEL_METRICS_EXPORTER
+          value: 'console,otlp' # 'console', 'none', 'otlp'
+      resources:
+        limits:
+          memory: 512Mi  # Original 120Mi - https://docs.dynatrace.com/docs/setup-and-configuration/dynatrace-oneagent/memory-requirements
+
+    checkoutService:
+      enabled: true
+      useDefault:
+        env: true
+      imageOverride:
+        repository: docker.io/shinojosa/astroshop
+        tag: 1.12.0-checkoutservice
+      podAnnotations:
+        oneagent.dynatrace.com/inject: "false"   
+        metadata.dynatrace.com/process.technology: "go"     
+
+    currencyService:
+      enabled: true
+      useDefault:
+        env: true
+      podAnnotations:
+        oneagent.dynatrace.com/inject: "false"   
+        metadata.dynatrace.com/process.technology: "cpp"  
+
+    emailService:
+      enabled: true
+      useDefault:
+        env: true
+      podAnnotations:
+        oneagent.dynatrace.com/inject: "false"   
+        metadata.dynatrace.com/process.technology: "ruby" 
+
+    flagd:
+      enabled: true
+      imageOverride:
+        repository: "ghcr.io/open-feature/flagd"
+        tag: "v0.11.1"
+      useDefault:
+        env: true
+      podAnnotations:
+        oneagent.dynatrace.com/inject: "false"   
+        metadata.dynatrace.com/process.technology: "flagd" 
+      replicas: 1
+      service:
+        port: 8013
+      envOverrides:
+        - name: FLAGD_METRICS_EXPORTER
+          value: otel
+        - name: FLAGD_OTEL_COLLECTOR_URI
+          value: $(OTEL_COLLECTOR_NAME):4317
+      resources:
+        limits:
+          memory: 300Mi
+      command:
+        - "/flagd-build"
+        - "start"
+        - "--uri"
+        - "file:./etc/flagd/demo.flagd.json"
+      mountedEmptyDirs:
+        - name: config-rw
+          mountPath: /etc/flagd
+      # flgad-ui as a sidecar container in the same pod so the flag json file can be shared
+      sidecarContainers:
+        - name: flagd-ui
+          useDefault:
+            env: true
+          service:
+            port: 4000
+          envOverrides:
+            - name: FLAGD_METRICS_EXPORTER
+              value: otel
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://$(OTEL_COLLECTOR_NAME):4318
+          resources:
+            limits:
+              memory: 300Mi
+          volumeMounts:
+            - name: config-rw
+              mountPath: /app/data
+      initContainers:
+        - name: init-config
+          image: busybox
+          command: ['sh', '-c', 'cp /config-ro/demo.flagd.json /config-rw/demo.flagd.json && cat /config-rw/demo.flagd.json']
+          volumeMounts:
+            - mountPath: /config-ro
+              name: config-ro
+            - mountPath: /config-rw
+              name: config-rw
+      additionalVolumes:
+        - name: config-ro
+          configMap:
+            name: '{{ include "otel-demo.name" . }}-flagd-config'
+
+    frauddetectionService:
+      enabled: true
+      useDefault:
+        env: true
+      podAnnotations:
+        oneagent.dynatrace.com/inject: "false"   
+        metadata.dynatrace.com/process.technology: "Java" 
+      imageOverride:
+        repository: docker.io/shinojosa/astroshop
+        tag: 1.12.0-frauddetectionservice
+      envOverrides:
+        - name: JAVA_TOOL_OPTIONS
+          value: '-javaagent:/app/opentelemetry-javaagent.jar' # '-javaagent:/app/opentelemetry-javaagent.jar' # - Duplicate spans from OA and Otel are avoided automatically - https://docs.dynatrace.com/docs/shortlink/opentelemetry-oneagent#java-span-dropping
+
+    frontend:
+      enabled: true
+      useDefault:
+        env: true
+      imageOverride:
+        repository: docker.io/shinojosa/astroshop
+        tag: 1.12.0-frontend
+      podAnnotations:
+        oneagent.dynatrace.com/inject: "true"
+        metadata.dynatrace.com/process.technology: "nodejs"
+      envOverrides:
+        - name: DT_LOGLEVELCON # https://www.dynatrace.com/support/help/shortlink/agent-logging
+          value: "" # info
+        - name: DT_LOGCON_PROC
+          value: "" # stdout
+        - name: DT_LOGGING_DESTINATION
+          value: "" # stdout 
+        - name: DT_LOGGING_NODEJS_FLAGS
+          value: ''  # Exporter=true,SpanProcessor=true,Propagator=true,Core=true
+        - name: OTEL_TRACES_EXPORTER
+          value: 'none' # 'console', 'none', 'otlp'
+        - name: OTEL_LOGS_EXPORTER
+          value: 'none' # 'console', 'none', 'otlp'
+        - name: OTEL_METRICS_EXPORTER
+          value: 'console,otlp' # 'console', 'none', 'otlp'
+        - name: OTEL_NODE_DISABLED_INSTRUMENTATIONS # https://github.com/open-telemetry/opentelemetry-js-contrib/blob/167dced09de0d2104561542b4f83047fa656505f/metapackages/auto-instrumentations-node/package.json#L51
+          value: ''   # other examples - http,grpc,dns,net
+        - name: NODE_OPTIONS
+          value: '' # - do not instrument at all with things like '-r ./Instrumentation.js' Avoid duplicate spans from OA and Otel - https://opentelemetry.io/docs/zero-code/js/
+        - name: PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT # This is used on the client-side for sending traces to the backend
+          value: ''
+        - name: NEXT_OTEL_VERBOSE
+          value: '0'           # This expects users to use `kubectl port-forward ...`
+
+      resources:
+        limits:
+          memory: 512Mi  # To run OneAgent we reccomend 512Mi, Original 250Mi - https://docs.dynatrace.com/docs/setup-and-configuration/dynatrace-oneagent/memory-requirements
+
+    frontendProxy:
+      enabled: true
+      podAnnotations:
+       dt.owner: dev-team-ux
+      service:
+        type: LoadBalancer
+      ingress:
+        enabled: true
+        annotations: {}
+        ingressClassName: nginx
+        hosts:
+          - host: "astroshop.domain.placeholder"
+            paths:
+              - path: /
+                pathType: ImplementationSpecific
+                port: 8080
+
+    imageprovider:
+      enabled: true
+      useDefault:
+        env: true
+      imageOverride:
+        repository: docker.io/shinojosa/astroshop
+        tag: 1.12.0-imageprovider #TODO: Change this too with extra containers
+      podAnnotations:
+        metrics.dynatrace.com/port: "9113"  # https://www.dynatrace.com/news/blog/simplify-observability-for-all-your-custom-metrics-part-4-prometheus/
+        metrics.dynatrace.com/scrape: "true" 
+        oneagent.dynatrace.com/inject: "false"   
+        metadata.dynatrace.com/process.technology: "nginx"    
+      # TODO: suppported in later helm chart
+      # containers:
+      #   - name: imageprovider
+      #     image: docker.io/docker.io/shinojosa/astroshop:0.0.12-imageprovider
+      #     imagePullPolicy: Always
+      #     envOverrides:
+      #       - name: OTEL_COLLECTOR_NAME
+      #         value: 'dynatrace-otel-gateway-collector'
+      #   - name: ngtinx-exporter 
+      #     image: nginx/nginx-prometheus-exporter:1.3.0
+      #     args: ["--nginx.scrape-uri=http://localhost:8081/status"]
+      #     ports: 
+      #       - containerPort: 9113
+  
+    kafka:
+      enabled: true
+      useDefault:
+        env: true
+      podAnnotations:
+        oneagent.dynatrace.com/inject: "true"
+        metadata.dynatrace.com/process.technology: "kafka" 
+      envOverrides:
+        - name: KAFKA_OPTS
+          value: '-Dotel.jmx.target.system=kafka-broker'  
+        - name: DT_LOGLEVELCON # https://www.dynatrace.com/support/help/shortlink/agent-logging
+          value: "" # info
+        - name: DT_LOGCON_PROC
+          value: "" # stdout
+        - name: DT_LOGGING_DESTINATION
+          value: "" # stdout 
+        - name: DT_LOGGING_JAVA_FLAGS
+          value: ''  # Exporter=true,SpanProcessor=true,Propagator=true,Core=true
+      resources:
+        limits:
+          memory: 600Mi
+
+    loadgenerator:
+      enabled: true
+      useDefault:
+        env: true
+      imageOverride:
+        repository: docker.io/shinojosa/astroshop
+        tag: 1.12.0-loadgenerator
+      podAnnotations:
+        oneagent.dynatrace.com/inject: "false"   
+        metadata.dynatrace.com/process.technology: "python"
+      resources:
+        limits:
+          memory: 2Gi
+
+    paymentService:
+      enabled: true
+      useDefault:
+        env: true
+      imageOverride:
+        repository: docker.io/shinojosa/astroshop
+        tag: 1.12.0-paymentservice
+      podAnnotations:
+        oneagent.dynatrace.com/inject: "true"
+        metadata.dynatrace.com/process.technology: "nodejs"
+      envOverrides:
+        - name: DT_LOGLEVELCON # https://www.dynatrace.com/support/help/shortlink/agent-logging
+          value: "" # info
+        - name: DT_LOGCON_PROC
+          value: "" # stdout
+        - name: DT_LOGGING_DESTINATION
+          value: "" # stdout 
+        - name: DT_LOGGING_NODEJS_FLAGS
+          value: ''  # Exporter=true,SpanProcessor=true,Propagator=true,Core=true
+        - name: OTEL_TRACES_EXPORTER
+          value: 'none' # 'console', 'none', 'otlp'
+        - name: OTEL_LOGS_EXPORTER
+          value: 'none' # 'console', 'none', 'otlp'
+        - name: OTEL_METRICS_EXPORTER
+          value: 'console,otlp' # 'console', 'none', 'otlp'
+        - name: OTEL_NODE_DISABLED_INSTRUMENTATIONS # https://github.com/open-telemetry/opentelemetry-js-contrib/blob/167dced09de0d2104561542b4f83047fa656505f/metapackages/auto-instrumentations-node/package.json#L51
+          value: ''  # other examples - http,grpc,dns,net
+        - name: NODE_OPTIONS
+          value: '' # - do not instrument at all with things like '-r ./Instrumentation.js' Avoid duplicate spans from OA and Otel - https://opentelemetry.io/docs/zero-code/js/
+      resources:
+        limits:
+          memory: 512Mi  # To run OneAgent we reccomend 512Mi, Original 120Mi - https://docs.dynatrace.com/docs/setup-and-configuration/dynatrace-oneagent/memory-requirements
+
+    productCatalogService:
+      enabled: true
+      useDefault:
+        env: true
+      imageOverride:
+        repository: docker.io/shinojosa/astroshop
+        tag: 1.12.0-productcatalogservice
+      podAnnotations:
+          oneagent.dynatrace.com/inject: "false"   
+          metadata.dynatrace.com/process.technology: "go"
+      envOverrides:
+        - name: OTEL_GO_AUTO_INSTRUMENTATION_ENABLED # Not currently supported - https://github.com/open-telemetry/opentelemetry-go-instrumentation/issues/241
+          value: 'false'
+      # TODO: Needs new chart
+      #     volumeMounts:
+      #       - mountPath: "/usr/src/app/products/"
+      #         name: volume
+      #         readOnly: false
+      # volumes:
+      #   - name: volume
+      #     persistentVolumeClaim:
+      #       claimName: product-catalog-storage
+
+    quoteService:
+      enabled: true
+      useDefault:
+        env: true
+      imageOverride:
+        repository: docker.io/shinojosa/astroshop
+        tag: 1.12.0-quoteservice
+      podAnnotations:
+        oneagent.dynatrace.com/inject: "false"   
+        metadata.dynatrace.com/process.technology: "PHP"
+      envOverrides:
+        - name: OTEL_PHP_AUTOLOAD_ENABLED
+          value: 'true'
+        - name: OTEL_PHP_DISABLED_INSTRUMENTATIONS
+          value: '' # Disable 'all','slim,psr15,psr18' instrumentations
+
+    recommendationService:
+      enabled: true
+      useDefault:
+        env: true
+      podAnnotations:
+        oneagent.dynatrace.com/inject: "false"   
+        metadata.dynatrace.com/process.technology: "python" 
+
+    shippingService:
+      enabled: true
+      useDefault:
+        env: true
+      podAnnotations:
+        oneagent.dynatrace.com/inject: "false"   
+        metadata.dynatrace.com/process.technology: "rust" 
+
+    valkey:
+      enabled: true
+      useDefault:
+        env: true
+      imageOverride:
+        repository: "valkey/valkey"
+        tag: "7.2-alpine"
+      podAnnotations:
+        metrics.dynatrace.com/port: "9121"  # https://www.dynatrace.com/news/blog/simplify-observability-for-all-your-custom-metrics-part-4-prometheus/
+        metrics.dynatrace.com/scrape: "true" 
+        oneagent.dynatrace.com/inject: "false"   
+        metadata.dynatrace.com/process.technology: "redis"
+# TODO: extra container needs newer chart
+        # - name: valkey-exporter 
+        #   image: oliver006/redis_exporter:v1.14.0
+        #   ports: 
+        #   - containerPort: 9121 
+
+
+  opensearch:
+    podAnnotations:
+      oneagent.dynatrace.com/inject: "true"
+      metadata.dynatrace.com/process.technology: "elasticsearch" 
+    enabled: false
+    envOverrides:
+      - name: DT_LOGLEVELCON # https://www.dynatrace.com/support/help/shortlink/agent-logging
+        value: "" # info
+      - name: DT_LOGCON_PROC
+        value: "" # stdout
+      - name: DT_LOGGING_DESTINATION
+        value: "" # stdout 
+      - name: DT_LOGGING_JAVA_FLAGS
+        value: ''  # Exporter=true,SpanProcessor=true,Propagator=true,Core=true
+
+  opentelemetry-collector:
+    enabled: false
+  jaeger:
+    enabled: false
+
+  prometheus:
+    enabled: false
+
+  grafana:
+    enabled: false
+
+
+opentelemetry-collector:
+  #fullnameOverride: "dynatrace-otel-gateway" # If we don't want releaseName prefix before this value
+  nameOverride: 'otel-gateway-collector'
+  mode: "deployment"
+  presets:
+    logsCollection:
+      enabled: false
+      includeCollectorLogs: false
+      # Enabling this writes checkpoints in /var/lib/otelcol/ host directory.
+      # Note this changes collector's user to root, so that it can write to host directory.
+      storeCheckpoints: false
+      # The maximum bytes size of the recombined field.
+      # Once the size exceeds the limit, all received entries of the source will be combined and flushed.
+      maxRecombineLogSize: 102400
+    # Configures the collector to collect host metrics.
+    # Adds the hostmetrics receiver to the metrics pipeline
+    # and adds the necessary volumes and volume mounts.
+    # Best used with mode = daemonset.
+    # See https://opentelemetry.io/docs/kubernetes/collector/components/#host-metrics-receiver for details on the receiver.
+    hostMetrics:
+      enabled: false
+    # Configures the Kubernetes Processor to add Kubernetes metadata.
+    # Adds the k8sattributes processor to all the pipelines
+    # and adds the necessary rules to ClusteRole.
+    # Best used with mode = daemonset.
+    # See https://opentelemetry.io/docs/kubernetes/collector/components/#kubernetes-attributes-processor for details on the receiver.
+    kubernetesAttributes:
+      enabled: false
+      # When enabled the processor will extra all labels for an associated pod and add them as resource attributes.
+      # The label's exact name will be the key.
+      extractAllPodLabels: false
+      # When enabled the processor will extra all annotations for an associated pod and add them as resource attributes.
+      # The annotation's exact name will be the key.
+      extractAllPodAnnotations: false
+    # Configures the collector to collect node, pod, and container metrics from the API server on a kubelet..
+    # Adds the kubeletstats receiver to the metrics pipeline
+    # and adds the necessary rules to ClusteRole.
+    # Best used with mode = daemonset.
+    # See https://opentelemetry.io/docs/kubernetes/collector/components/#kubeletstats-receiver for details on the receiver.
+    kubeletMetrics:
+      enabled: false
+    # Configures the collector to collect kubernetes events.
+    # Adds the k8sobject receiver to the logs pipeline
+    # and collects kubernetes events by default.
+    # Best used with mode = deployment or statefulset.
+    # See https://opentelemetry.io/docs/kubernetes/collector/components/#kubernetes-objects-receiver for details on the receiver.
+    kubernetesEvents:
+      enabled: false
+    # Configures the Kubernetes Cluster Receiver to collect cluster-level metrics.
+    # Adds the k8s_cluster receiver to the metrics pipeline
+    # and adds the necessary rules to ClusteRole.
+    # Best used with mode = deployment or statefulset.
+    # See https://opentelemetry.io/docs/kubernetes/collector/components/#kubernetes-cluster-receiver for details on the receiver.
+    clusterMetrics:
+      enabled: false
+
+  configMap:
+    # Specifies whether a configMap should be created (true by default)
+    create: true
+    # Specifies an existing ConfigMap to be mounted to the pod
+    # The ConfigMap MUST include the collector configuration via a key named 'relay' or the collector will not start.
+    existingName: ""
+    # Specifies the relative path to custom ConfigMap template file. This option SHOULD be used when bundling a custom
+    # ConfigMap template, as it enables pod restart via a template checksum annotation.
+    # existingPath: ""
+
+  # Base collector configuration.
+  # Supports templating. To escape existing instances of {{ }}, use {{` <original content> `}}.
+  # For example, {{ REDACTED_EMAIL }} becomes {{` {{ REDACTED_EMAIL }} `}}.
+  config:
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: ${env:MY_POD_IP}:4317
+          http:
+            endpoint: ${env:MY_POD_IP}:4318
+      hostmetrics:
+        root_path: /hostfs
+        scrapers:
+          cpu:
+            metrics:
+              system.cpu.utilization:
+                enabled: true
+          disk: {}
+          load: {}
+          filesystem:
+            exclude_mount_points:
+              mount_points:
+                - /dev/*
+                - /proc/*
+                - /sys/*
+                - /run/k3s/containerd/*
+                - /var/lib/docker/*
+                - /var/lib/kubelet/*
+                - /snap/*
+              match_type: regexp
+            exclude_fs_types:
+              fs_types:
+                - autofs
+                - binfmt_misc
+                - bpf
+                - cgroup2
+                - configfs
+                - debugfs
+                - devpts
+                - devtmpfs
+                - fusectl
+                - hugetlbfs
+                - iso9660
+                - mqueue
+                - nsfs
+                - overlay
+                - proc
+                - procfs
+                - pstore
+                - rpc_pipefs
+                - securityfs
+                - selinuxfs
+                - squashfs
+                - sysfs
+                - tracefs
+              match_type: strict
+          memory:
+            metrics:
+              system.memory.utilization:
+                enabled: true
+          network: {}
+          paging: {}
+          processes: {}
+          process:
+            mute_process_exe_error: true
+            mute_process_io_error: true
+            mute_process_user_error: true      
+    processors:
+      cumulativetodelta: {}
+      memory_limiter:
+        check_interval: 1s
+        limit_percentage: 75
+        spike_limit_percentage: 15
+      batch:
+        send_batch_size: 10000
+        timeout: 10s
+      resourcedetection/aks:
+        detectors: [env, aks]
+        timeout: 2s
+        override: false
+      k8sattributes:
+        extract:
+          metadata:
+            - k8s.pod.name
+            - k8s.pod.uid
+            - k8s.deployment.name
+            - k8s.statefulset.name
+            - k8s.daemonset.name
+            - k8s.cronjob.name
+            - k8s.namespace.name
+            - k8s.node.name
+            - k8s.cluster.uid
+        pod_association:
+          - sources:
+            - from: resource_attribute
+              name: k8s.pod.name
+            - from: resource_attribute
+              name: k8s.namespace.name
+          - sources:
+            - from: resource_attribute
+              name: k8s.pod.ip
+          - sources:
+            - from: resource_attribute
+              name: k8s.pod.uid
+          - sources:
+            - from: connection
+      transform:
+        error_mode: ignore
+        trace_statements:
+          - context: resource
+            statements:
+              - set(attributes["dt.kubernetes.workload.kind"], "statefulset") where IsString(attributes["k8s.statefulset.name"])
+              - set(attributes["dt.kubernetes.workload.name"], attributes["k8s.statefulset.name"]) where IsString(attributes["k8s.statefulset.name"])
+              - set(attributes["dt.kubernetes.workload.kind"], "deployment") where IsString(attributes["k8s.deployment.name"])
+              - set(attributes["dt.kubernetes.workload.name"], attributes["k8s.deployment.name"]) where IsString(attributes["k8s.deployment.name"])
+              - set(attributes["dt.kubernetes.workload.kind"], "daemonset") where IsString(attributes["k8s.daemonset.name"])
+              - set(attributes["dt.kubernetes.workload.name"], attributes["k8s.daemonset.name"]) where IsString(attributes["k8s.daemonset.name"])
+              - set(attributes["dt.kubernetes.cluster.id"], attributes["k8s.cluster.uid"]) where IsString(attributes["k8s.cluster.uid"])
+          - context: span
+            statements:
+              # - set(name, "NO_NAME") where name == ""    
+              # could be removed when https://github.com/vercel/next.js/pull/64852 is fixed upstream
+              - replace_pattern(name, "\\?.*", "")
+              - replace_match(name, "GET /api/products/*", "GET /api/products/{productId}")
+        log_statements:
+          - context: resource
+            statements:
+              - set(attributes["dt.kubernetes.workload.kind"], "statefulset") where IsString(attributes["k8s.statefulset.name"])
+              - set(attributes["dt.kubernetes.workload.name"], attributes["k8s.statefulset.name"]) where IsString(attributes["k8s.statefulset.name"])
+              - set(attributes["dt.kubernetes.workload.kind"], "deployment") where IsString(attributes["k8s.deployment.name"])
+              - set(attributes["dt.kubernetes.workload.name"], attributes["k8s.deployment.name"]) where IsString(attributes["k8s.deployment.name"])
+              - set(attributes["dt.kubernetes.workload.kind"], "daemonset") where IsString(attributes["k8s.daemonset.name"])
+              - set(attributes["dt.kubernetes.workload.name"], attributes["k8s.daemonset.name"]) where IsString(attributes["k8s.daemonset.name"])
+              - set(attributes["dt.kubernetes.cluster.id"], attributes["k8s.cluster.uid"]) where IsString(attributes["k8s.cluster.uid"]) 
+        metric_statements:
+          - context: resource
+            statements:
+              - set(attributes["dt.kubernetes.workload.kind"], "statefulset") where IsString(attributes["k8s.statefulset.name"])
+              - set(attributes["dt.kubernetes.workload.name"], attributes["k8s.statefulset.name"]) where IsString(attributes["k8s.statefulset.name"])
+              - set(attributes["dt.kubernetes.workload.kind"], "deployment") where IsString(attributes["k8s.deployment.name"])
+              - set(attributes["dt.kubernetes.workload.name"], attributes["k8s.deployment.name"]) where IsString(attributes["k8s.deployment.name"])
+              - set(attributes["dt.kubernetes.workload.kind"], "daemonset") where IsString(attributes["k8s.daemonset.name"])
+              - set(attributes["dt.kubernetes.workload.name"], attributes["k8s.daemonset.name"]) where IsString(attributes["k8s.daemonset.name"])
+              - set(attributes["dt.kubernetes.cluster.id"], attributes["k8s.cluster.uid"]) where IsString(attributes["k8s.cluster.uid"])
+          # - context: metric
+          #   statements:
+          #     - set(attributes["span.name"], "NO_NAME") where IsString(attributes["span.name"]) and attributes["span.name"] == ""                               
+
+    exporters:
+      # NOTE: Prior to v0.86.0 use `logging` instead of `debug`.
+      debug:
+        verbosity: basic
+        sampling_initial: 5
+        sampling_thereafter: 2000
+      otlphttp:
+        endpoint: "${env:DT_ENDPOINT}"
+        headers:
+          Authorization: "Api-Token ${env:DT_API_TOKEN}"
+    
+    connectors:
+      spanmetrics: {}
+
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          processors: [memory_limiter, resourcedetection/aks, k8sattributes, transform, batch]
+          exporters: [otlphttp, spanmetrics, debug] # debug
+        metrics:
+          receivers: [otlp, spanmetrics] # hostmetrics - permission denied
+          processors: [memory_limiter, cumulativetodelta, resourcedetection/aks, k8sattributes, transform, batch]
+          exporters: [otlphttp, debug] # debug
+        logs:
+          receivers: [otlp]
+          processors: [memory_limiter, resourcedetection/aks, k8sattributes, transform, batch]
+          exporters: [otlphttp, debug] # debug
+      extensions:
+      - health_check
+    extensions:
+      health_check:
+        endpoint: "0.0.0.0:13133"
+        path: "/"
+
+  image:
+    # If you want to use the core image `otel/opentelemetry-collector`, you also need to change `command.name` value to `otelcol`.
+    repository: "otel/opentelemetry-collector-contrib"
+    pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: "0.108.0"
+  imagePullSecrets: []
+
+  # OpenTelemetry Collector executable
+  command:
+    name: ""
+    extraArgs: []
+
+  serviceAccount:
+    create: true
+    name: "dynatrace-otel-gateway-collector"
+
+  clusterRole:
+    create: false
+
+  podSecurityContext: {}
+  securityContext: {}
+
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpreadConstraints: []
+
+  # Allows for pod scheduler prioritisation
+  priorityClassName: ""
+
+  extraEnvs: []
+  extraEnvsFrom:
+    - secretRef:
+        name: dynatrace-otelcol-dt-api-credentials
+  extraVolumes:
+    - name: hostfs
+      hostPath:
+        path: /
+
+  # This also supports template content, which will eventually be converted to yaml.
+  extraVolumeMounts:
+    - mountPath: /hostfs
+      name: hostfs
+      readOnly: true
+
+  # Configuration for ports
+  # nodePort is also allowed
+  ports:
+    otlp:
+      enabled: true
+      containerPort: 4317
+      servicePort: 4317
+      hostPort: 4317
+      protocol: TCP
+      # nodePort: 30317
+      appProtocol: grpc
+    otlp-http:
+      enabled: true
+      containerPort: 4318
+      servicePort: 4318
+      hostPort: 4318
+      protocol: TCP
+    jaeger-compact:
+      enabled: false
+    jaeger-thrift:
+      enabled: false
+    jaeger-grpc:
+      enabled: false
+    zipkin:
+      enabled: false
+    metrics:
+      enabled: false
+      containerPort: 8888
+      servicePort: 8888
+      protocol: TCP
+    health:
+      containerPort: 13133
+      servicePort: 13133
+      protocol: TCP
+      enabled: true
+
+  useGOMEMLIMIT: true
+
+  resources:
+    limits:
+      memory: 512Mi
+
+  podAnnotations:
+    metrics.dynatrace.com/port: "8888"  # https://www.dynatrace.com/news/blog/simplify-observability-for-all-your-custom-metrics-part-4-prometheus/
+    metrics.dynatrace.com/scrape: "true"
+    oneagent.dynatrace.com/inject: "false"
+
+  # Common labels to add to all otel-collector resources. Evaluated as a template.
+  additionalLabels: {}
+  #  app.kubernetes.io/part-of: my-app
+
+  # Host networking requested for this pod. Use the host's network namespace.
+  hostNetwork: false
+
+  # Adding entries to Pod /etc/hosts with HostAliases
+  # https://kubernetes.io/docs/tasks/network/customize-hosts-file-for-pods/
+  hostAliases: []
+    # - ip: "1.2.3.4"
+    #   hostnames:
+    #     - "my.host.com"
+
+  # Pod DNS policy ClusterFirst, ClusterFirstWithHostNet, None, Default, None
+  dnsPolicy: ""
+
+  # Custom DNS config. Required when DNS policy is None.
+  dnsConfig: {}
+
+  # only used with deployment mode
+  replicaCount: 1
+
+  # only used with deployment mode
+  revisionHistoryLimit: 10
+
+  annotations: {}
+
+  # List of extra sidecars to add.
+  # This also supports template content, which will eventually be converted to yaml.
+  extraContainers: []
+  # extraContainers:
+  #   - name: test
+  #     command:
+  #       - cp
+  #     args:
+  #       - /bin/sleep
+  #       - /test/sleep
+  #     image: busybox:latest
+  #     volumeMounts:
+  #       - name: test
+  #         mountPath: /test
+
+  # List of init container specs, e.g. for copying a binary to be executed as a lifecycle hook.
+  # This also supports template content, which will eventually be converted to yaml.
+  # Another usage of init containers is e.g. initializing filesystem permissions to the OTLP Collector user `10001` in case you are using persistence and the volume is producing a permission denied error for the OTLP Collector container.
+  initContainers: []
+  # initContainers:
+  #   - name: test
+  #     image: busybox:latest
+  #     command:
+  #       - cp
+  #     args:
+  #       - /bin/sleep
+  #       - /test/sleep
+  #     volumeMounts:
+  #       - name: test
+  #         mountPath: /test
+  #  - name: init-fs
+  #    image: busybox:latest
+  #    command:
+  #      - sh
+  #      - '-c'
+  #      - 'chown -R 10001: /var/lib/storage/otc' # use the path given as per `extensions.file_storage.directory` & `extraVolumeMounts[x].mountPath`
+  #    volumeMounts:
+  #      - name: opentelemetry-collector-data # use the name of the volume used for persistence
+  #        mountPath: /var/lib/storage/otc # use the path given as per `extensions.file_storage.directory` & `extraVolumeMounts[x].mountPath`
+
+  livenessProbe:
+    initialDelaySeconds: 15
+    periodSeconds: 5
+    timeoutSeconds: 5
+    httpGet:
+      port: 13133
+      path: "/"
+  readinessProbe:
+    initialDelaySeconds: 15
+    periodSeconds: 5
+    timeoutSeconds: 5
+    httpGet:
+      port: 13133
+      path: "/"
+      
+  # startup probe configuration
+  # Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+  ##
+  #startupProbe: {}
+    # Number of seconds after the container has started before startup probes are initiated.
+    # initialDelaySeconds: 1
+    # How often in seconds to perform the probe.
+    # periodSeconds: 10
+    # Number of seconds after which the probe times out.
+    # timeoutSeconds: 1
+    # Minimum consecutive failures for the probe to be considered failed after having succeeded.
+    # failureThreshold: 1
+    # Duration in seconds the pod needs to terminate gracefully upon probe failure.
+    # terminationGracePeriodSeconds: 10
+    # httpGet:
+    #   port: 13133
+    #   path: /
+
+  service:
+    # Enable the creation of a Service.
+    # By default, it's enabled on mode != daemonset.
+    # However, to enable it on mode = daemonset, its creation must be explicitly enabled
+    # enabled: true
+
+    type: ClusterIP
+    # type: LoadBalancer
+    # loadBalancerIP: 1.2.3.4
+    # loadBalancerSourceRanges: []
+
+    # By default, Service of type 'LoadBalancer' will be created setting 'externalTrafficPolicy: Cluster'
+    # unless other value is explicitly set.
+    # Possible values are Cluster or Local (https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip)
+    # externalTrafficPolicy: Cluster
+
+    annotations: {}
+
+    # By default, Service will be created setting 'internalTrafficPolicy: Local' on mode = daemonset
+    # unless other value is explicitly set.
+    # Setting 'internalTrafficPolicy: Cluster' on a daemonset is not recommended
+    # internalTrafficPolicy: Cluster
+
+  ingress:
+    enabled: false
+    # annotations: {}
+    # ingressClassName: nginx
+    # hosts:
+    #   - host: collector.example.com
+    #     paths:
+    #       - path: /
+    #         pathType: Prefix
+    #         port: 4318
+    # tls:
+    #   - secretName: collector-tls
+    #     hosts:
+    #       - collector.example.com
+
+    # Additional ingresses - only created if ingress.enabled is true
+    # Useful for when differently annotated ingress services are required
+    # Each additional ingress needs key "name" set to something unique
+    additionalIngresses: []
+    # - name: cloudwatch
+    #   ingressClassName: nginx
+    #   annotations: {}
+    #   hosts:
+    #     - host: collector.example.com
+    #       paths:
+    #         - path: /
+    #           pathType: Prefix
+    #           port: 4318
+    #   tls:
+    #     - secretName: collector-tls
+    #       hosts:
+    #         - collector.example.com
+
+  podMonitor:
+    # The pod monitor by default scrapes the metrics port.
+    # The metrics port needs to be enabled as well.
+    enabled: false
+    metricsEndpoints:
+      - port: metrics
+        # interval: 15s
+
+    # additional labels for the PodMonitor
+    extraLabels: {}
+    #   release: kube-prometheus-stack
+
+  serviceMonitor:
+    # The service monitor by default scrapes the metrics port.
+    # The metrics port needs to be enabled as well.
+    enabled: false
+    metricsEndpoints:
+      - port: metrics
+        # interval: 15s
+
+    # additional labels for the ServiceMonitor
+    extraLabels: {}
+    #  release: kube-prometheus-stack
+    # Used to set relabeling and metricRelabeling configs on the ServiceMonitor
+    # https://prometheus.io/docs/prometheus/latest/configuration/configuration/#relabel_config
+    relabelings: []
+    metricRelabelings: []
+
+  # PodDisruptionBudget is used only if deployment enabled
+  podDisruptionBudget:
+    enabled: false
+  #   minAvailable: 2
+  #   maxUnavailable: 1
+
+  # autoscaling is used only if mode is "deployment" or "statefulset"
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 10
+    behavior: {}
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+
+  rollout:
+    rollingUpdate: {}
+    # When 'mode: daemonset', maxSurge cannot be used when hostPort is set for any of the ports
+    # maxSurge: 25%
+    # maxUnavailable: 0
+    strategy: RollingUpdate
+
+  prometheusRule:
+    enabled: false
+    groups: []
+    # Create default rules for monitoring the collector
+    defaultRules:
+      enabled: false
+
+    # additional labels for the PrometheusRule
+    extraLabels: {}
+
+  statefulset:
+    # volumeClaimTemplates for a statefulset
+    volumeClaimTemplates: []
+    podManagementPolicy: "Parallel"
+    # Controls if and how PVCs created by the StatefulSet are deleted. Available in Kubernetes 1.23+.
+    persistentVolumeClaimRetentionPolicy:
+      enabled: false
+      whenDeleted: Retain
+      whenScaled: Retain
+
+  networkPolicy:
+    enabled: false
+
+    # Annotations to add to the NetworkPolicy
+    annotations: {}
+
+    # Configure the 'from' clause of the NetworkPolicy.
+    # By default this will restrict traffic to ports enabled for the Collector. If
+    # you wish to further restrict traffic to other hosts or specific namespaces,
+    # see the standard NetworkPolicy 'spec.ingress.from' definition for more info:
+    # https://kubernetes.io/docs/reference/kubernetes-api/policy-resources/network-policy-v1/
+    allowIngressFrom: []
+    # # Allow traffic from any pod in any namespace, but not external hosts
+    # - namespaceSelector: {}
+    # # Allow external access from a specific cidr block
+    # - ipBlock:
+    #     cidr: 192.168.1.64/32
+    # # Allow access from pods in specific namespaces
+    # - namespaceSelector:
+    #     matchExpressions:
+    #       - key: kubernetes.io/metadata.name
+    #         operator: In
+    #         values:
+    #           - "cats"
+    #           - "dogs"
+
+    # Add additional ingress rules to specific ports
+    # Useful to allow external hosts/services to access specific ports
+    # An example is allowing an external prometheus server to scrape metrics
+    #
+    # See the standard NetworkPolicy 'spec.ingress' definition for more info:
+    # https://kubernetes.io/docs/reference/kubernetes-api/policy-resources/network-policy-v1/
+    extraIngressRules: []
+    # - ports:
+    #   - port: metrics
+    #     protocol: TCP
+    #   from:
+    #     - ipBlock:
+    #         cidr: 192.168.1.64/32
+
+    # Restrict egress traffic from the OpenTelemetry collector pod
+    # See the standard NetworkPolicy 'spec.egress' definition for more info:
+    # https://kubernetes.io/docs/reference/kubernetes-api/policy-resources/network-policy-v1/
+    egressRules: []
+    #  - to:
+    #      - namespaceSelector: {}
+    #      - ipBlock:
+    #          cidr: 192.168.10.10/24
+    #    ports:
+    #      - port: 1234
+    #        protocol: TCP
+
+  # Allow containers to share processes across pod namespace
+  shareProcessNamespace: false

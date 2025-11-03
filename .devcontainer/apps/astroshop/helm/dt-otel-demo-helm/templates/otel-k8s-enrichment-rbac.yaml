@@ -1,0 +1,62 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: dynatrace-otel-collector-k8s-enrichment
+  labels:
+    app: dynatrace-otel-collector-k8s-enrichment
+rules:
+  - apiGroups:
+      - ''
+    resources:
+      - 'pods'
+      - 'namespaces'
+    verbs:
+      - 'get'
+      - 'watch'
+      - 'list'
+  - apiGroups:
+      - 'apps'
+    resources:
+      - 'replicasets'
+    verbs:
+      - 'get'
+      - 'list'
+      - 'watch'
+  - apiGroups:
+      - 'extensions'
+    resources:
+      - 'replicasets'
+    verbs:
+      - 'get'
+      - 'list'
+      - 'watch'
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ .Release.Name }}-otel-gateway-collector-k8s-enrichment
+  labels:
+    app: {{ .Release.Name }}-otel-gateway-collector-k8s-enrichment
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: dynatrace-otel-collector-k8s-enrichment
+subjects:
+  - kind: ServiceAccount
+    name: {{ .Release.Name }}-otel-gateway-collector
+    namespace: {{ .Release.Namespace }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ .Release.Name }}-k8s-enrichment
+  labels:
+    app: {{ .Release.Name }}-k8s-enrichment
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: dynatrace-otel-collector-k8s-enrichment
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "otel-demo.name" . }}
+    namespace: {{ .Release.Namespace }}

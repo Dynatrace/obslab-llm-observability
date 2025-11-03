@@ -1,0 +1,19 @@
+spec:
+  template:
+    metadata:
+      annotations:
+        oneagent.dynatrace.com/inject: "false"   
+        metadata.dynatrace.com/process.technology: "python"       
+    spec:
+      containers:
+        - name: loadgenerator
+          image: ghcr.io/open-telemetry/demo:1.12.0-loadgenerator
+          imagePullPolicy: Always
+          env:
+            - name: LOCUST_HOST
+              value: http://astroshop-dev.k8s-demo.dynatracelabs.com
+            - name: OTEL_COLLECTOR_NAME
+              value: 'dynatrace-otel-gateway-collector'
+          resources:
+            limits:
+              memory: 2Gi

@@ -1,0 +1,104 @@
+# apiVersion: "networking.k8s.io/v1"
+# kind: Ingress
+# metadata:
+#   name: {{ include "otel-demo.name" . }}-frontendproxy-root
+#   annotations:
+#     #nginx.ingress.kubernetes.io/whitelist-source-range: {{ .Values.ingressWhitelistSourceRange }}
+#     #nginx.ingress.kubernetes.io/rewrite-target: /
+# spec:
+#   ingressClassName: traefik
+#   rules:
+#     - host: {{ .Values.ingressHostUrl }}
+#       http:
+#         paths:
+#           - path: /
+#             pathType: Prefix
+#             backend:
+#               service:
+#                 name: {{ include "otel-demo.name" . }}-frontend
+#                 port:
+#                   number: 8080
+# ---
+# apiVersion: "networking.k8s.io/v1"
+# kind: Ingress
+# metadata:
+#   name: {{ include "otel-demo.name" . }}-frontendproxy-rewrite-loadgen
+#   annotations:
+#     #nginx.ingress.kubernetes.io/whitelist-source-range: {{ .Values.ingressWhitelistSourceRange }}
+#     #nginx.ingress.kubernetes.io/rewrite-target: /$2
+# spec:
+#   ingressClassName: traefik
+#   rules:
+#     - host: {{ .Values.ingressHostUrl }}
+#       http:
+#         paths:
+#           - path: /loadgen(/|$)(.*)
+#             pathType: Prefix
+#             backend:
+#               service:
+#                 name: {{ include "otel-demo.name" . }}-loadgenerator
+#                 port:
+#                   number: 8089
+# ---
+# apiVersion: "networking.k8s.io/v1"
+# kind: Ingress
+# metadata:
+#   name: {{ include "otel-demo.name" . }}-frontendproxy-rewrite-flags
+#   annotations:
+#     #nginx.ingress.kubernetes.io/whitelist-source-range: {{ .Values.ingressWhitelistSourceRange }}
+#     #nginx.ingress.kubernetes.io/rewrite-target: /$2
+# spec:
+#   ingressClassName: traefik
+#   rules:
+#     - host: {{ .Values.ingressHostUrl }}
+#       http:
+#         paths:
+#           - path: /flagservice(/|$)(.*)
+#             pathType: Prefix
+#             backend:
+#               service:
+#                 name: {{ include "otel-demo.name" . }}-flagd
+#                 port:
+#                   number: 8013
+# ---
+# apiVersion: "networking.k8s.io/v1"
+# kind: Ingress
+# metadata:
+#   name: {{ include "otel-demo.name" . }}-frontendproxy-rewrite-images
+#   annotations:
+#     #nginx.ingress.kubernetes.io/whitelist-source-range: {{ .Values.ingressWhitelistSourceRange }}
+#     #nginx.ingress.kubernetes.io/rewrite-target: /$2
+# spec:
+#   ingressClassName: traefik
+#   rules:
+#     - host: {{ .Values.ingressHostUrl }}
+#       http:
+#         paths:
+#           - path: /images(/|$)(.*)
+#             pathType: Prefix
+#             backend:
+#               service:
+#                 name: {{ include "otel-demo.name" . }}-imageprovider
+#                 port:
+#                   number: 8081
+# ---
+# apiVersion: "networking.k8s.io/v1"
+# kind: Ingress
+# metadata:
+#   name: {{ include "otel-demo.name" . }}-frontendproxy-rewrite-feature
+#   annotations:
+#     #nginx.ingress.kubernetes.io/whitelist-source-range: {{ .Values.ingressWhitelistSourceRange }}
+#     #ingress.kubernetes.io/rewrite-target: /feature/$1
+# spec:
+#   ingressClassName: traefik
+#   rules:
+#     - host: {{ .Values.ingressHostUrl }}
+#       http:
+#         paths:
+#           - path: /feature(/|$)(.*)
+#             pathType: Prefix
+#             backend:
+#               service:
+#                 name: {{ include "otel-demo.name" . }}-flagd
+#                 port:
+#                   number: 4000
