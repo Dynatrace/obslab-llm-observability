@@ -1,6 +1,6 @@
-site_name: "Dynatrace Enablement Lab: Gen AI & LLM Observability"
+site_name: "Dynatrace Observability Lab: Gen AI & LLM Observability"
 repo_name: "View Code on GitHub"
-repo_url: "https://github.com/dynatrace-wwse/enablement-gen-ai-llm-observability"
+repo_url: "https://github.com/dynatrace/obslab-llm-observability"
 nav:
   - '1. About': index.md
   - '2. Getting started': 2-getting-started.md
@@ -9,9 +9,14 @@ nav:
   - '5. Direct Chat': 5-direct.md
   - '6. RAG': 6-rag.md
   - '7. Agentic': 7-agentic.md
-  - '8. Cleanup': cleanup.md
-  - '9. Resources': resources.md
-  - "10. What's next?": whats-next.md
+  - '8. Other LLM 🧠':
+      - 'Amazon Bedrock': bedrock.md
+      - 'Multi-Mode': multi-mode.md
+      - 'Ollama-Pinecone': ollama-pinecone.md
+      - 'RAG': rag.md
+  - '9. Cleanup': cleanup.md
+  - '10. Resources': resources.md
+  - "11. What's next?": whats-next.md
 theme:
   name: material
   custom_dir: docs/overrides
