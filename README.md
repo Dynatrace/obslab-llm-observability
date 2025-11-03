@@ -3,11 +3,11 @@
 [![Davis CoPilot](https://img.shields.io/badge/Davis%20CoPilot-AI%20Powered-purple?logo=dynatrace&logoColor=white)](https://dynatrace-wwse.github.io/codespaces-framework/dynatrace-integration/#mcp-server-integration)
 [![dt-badge](https://img.shields.io/badge/Powered_by-DT_Enablement-8A2BE2?logo=dynatrace)](https://dynatrace-wwse.github.io/codespaces-framework/)
 [![Downloads](https://img.shields.io/docker/pulls/shinojosa/dt-enablement?logo=docker)](https://hub.docker.com/r/shinojosa/dt-enablement)
-![Integration tests](https://github.com/dynatrace-wwse/enablement-gen-ai-llm-observability/actions/workflows/integration-tests.yaml/badge.svg)
-[![Version](https://img.shields.io/github/v/release/dynatrace-wwse/enablement-gen-ai-llm-observability?color=blueviolet)](https://github.com/dynatrace-wwse/enablement-gen-ai-llm-observability/releases)
-[![Commits](https://img.shields.io/github/commits-since/dynatrace-wwse/enablement-gen-ai-llm-observability/latest?color=ff69b4&include_prereleases)](https://github.com/dynatrace-wwse/enablement-gen-ai-llm-observability/graphs/commit-activity)
-[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg?color=green)](https://github.com/dynatrace-wwse/enablement-gen-ai-llm-observability/blob/main/LICENSE)
-[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Live-green)](https://dynatrace-wwse.github.io/enablement-gen-ai-llm-observability/)
+![Integration tests](https://github.com/dynatrace/obslab-llm-observability/actions/workflows/integration-tests.yaml/badge.svg)
+[![Version](https://img.shields.io/github/v/release/dynatrace/obslab-llm-observability?color=blueviolet)](https://github.com/dynatrace/obslab-llm-observability/releases)
+[![Commits](https://img.shields.io/github/commits-since/dynatrace/obslab-llm-observability/latest?color=ff69b4&include_prereleases)](https://github.com/dynatrace/obslab-llm-observability/graphs/commit-activity)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg?color=green)](https://github.com/dynatrace/obslab-llm-observability/blob/main/LICENSE)
+[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Live-green)](https://dynatrace.github.io/obslab-llm-observability/)
 
 ___
 
@@ -26,4 +26,4 @@ Dynatrace Gen AI & LLM observability provides complete visibility into all aspec
 In this tutorial we will learn how it is easy to observe an AI application (AI Travel advisor) that uses [Ollama](https://ollama.com/) as Large Language Model, [Weaviate](https://weaviate.io/) as Vector Database, and [LangChain](https://www.langchain.com/) as an orchestrator to create [Retrieval augmented generation (RAG)](https://python.langchain.com/docs/concepts/rag/) and [Agentic](https://python.langchain.com/docs/concepts/agents/) AI Pipelines.
 
 Ready to learn more about Gen AI & LLM Observability? 
-## [Yes, let's start the enablement!](https://dynatrace-wwse.github.io/enablement-gen-ai-llm-observability)
+## [Yes, let's start the enablement!](https://dynatrace.github.io/obslab-llm-observability)
