@@ -1,0 +1,505 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name:  {{ include "otel-demo.name" . }}-flagd-config-script
+data:
+  update_flag.sh: |
+    #!/bin/bash
+    apk --update add curl jq
+    jq ".flags.$FLAGNAME.defaultVariant |= \"on\"" /tmp/config/demo.flagd.json | jq -c '{ data: . }' > /tmp/output.json
+    curl -k -X POST --data "@/tmp/output.json" "http://{{ include "otel-demo.name" . }}-flagd:4000/feature/api/write-to-file"
+    
+  stop.sh: |
+    #!/bin/bash
+    apk --update add curl jq
+    jq -c '{ data: . }' /tmp/config/demo.flagd.json > /tmp/output.json
+    curl -k -X POST --data "@/tmp/output.json" "http://{{ include "otel-demo.name" . }}-flagd:4000/feature/api/write-to-file"
+    sleep 5000
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: productcatalog-trigger-failure-job-start
+spec:
+  schedule: "0 7 * * *"
+  suspend: false
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          volumes:
+            - name: scripts
+              configMap:
+                name: {{ include "otel-demo.name" . }}-flagd-config-script
+                defaultMode: 0777
+            - name: flagd-flags
+              configMap:
+                name: {{ include "otel-demo.name" . }}-flagd-config
+          containers:
+          - name: execute
+            env:
+             - name: FLAGNAME
+               value: productCatalogFailure
+            image: alpine:3.12
+            imagePullPolicy: IfNotPresent
+            command: [ "/bin/sh", "/tmp/scripts/update_flag.sh"]
+            volumeMounts:
+              - mountPath: "/tmp/scripts"
+                name: scripts
+              - mountPath: "/tmp/config"
+                name: flagd-flags
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: recommendationservice-trigger-cachefailure-job-start
+spec:
+  schedule: "0 8 * * *"
+  suspend: false
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          volumes:
+            - name: scripts
+              configMap:
+                name: {{ include "otel-demo.name" . }}-flagd-config-script
+                defaultMode: 0777
+            - name: flagd-flags
+              configMap:
+                name: {{ include "otel-demo.name" . }}-flagd-config
+          containers:
+          - name: execute
+            env:
+             - name: FLAGNAME
+               value: recommendationServiceCacheFailure
+            image: alpine:3.12
+            imagePullPolicy: IfNotPresent
+            command: [ "/bin/sh", "/tmp/scripts/update_flag.sh"]
+            volumeMounts:
+              - mountPath: "/tmp/scripts"
+                name: scripts
+              - mountPath: "/tmp/config"
+                name: flagd-flags
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: adservice-trigger-manualgc-job-start
+spec:
+  schedule: "0 9 * * *"
+  suspend: false
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          volumes:
+            - name: scripts
+              configMap:
+                name: {{ include "otel-demo.name" . }}-flagd-config-script
+                defaultMode: 0777
+            - name: flagd-flags
+              configMap:
+                name: {{ include "otel-demo.name" . }}-flagd-config
+          containers:
+          - name: execute
+            env:
+             - name: FLAGNAME
+               value: adServiceManualGc
+            image: alpine:3.12
+            imagePullPolicy: IfNotPresent
+            command: [ "/bin/sh", "/tmp/scripts/update_flag.sh"]
+            volumeMounts:
+              - mountPath: "/tmp/scripts"
+                name: scripts
+              - mountPath: "/tmp/config"
+                name: flagd-flags
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: adservice-trigger-highcpu-job-start
+spec:
+  schedule: "0 10 * * *"
+  suspend: false
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          volumes:
+            - name: scripts
+              configMap:
+                name: {{ include "otel-demo.name" . }}-flagd-config-script
+                defaultMode: 0777
+            - name: flagd-flags
+              configMap:
+                name: {{ include "otel-demo.name" . }}-flagd-config
+          containers:
+          - name: execute
+            env:
+             - name: FLAGNAME
+               value: adServiceHighCpu
+            image: alpine:3.12
+            imagePullPolicy: IfNotPresent
+            command: [ "/bin/sh", "/tmp/scripts/update_flag.sh"]
+            volumeMounts:
+              - mountPath: "/tmp/scripts"
+                name: scripts
+              - mountPath: "/tmp/config"
+                name: flagd-flags
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: adservice-trigger-failure-job-start
+spec:
+  schedule: "0 11 * * *"
+  suspend: false
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          volumes:
+            - name: scripts
+              configMap:
+                name: {{ include "otel-demo.name" . }}-flagd-config-script
+                defaultMode: 0777
+            - name: flagd-flags
+              configMap:
+                name: {{ include "otel-demo.name" . }}-flagd-config
+          containers:
+          - name: execute
+            env:
+             - name: FLAGNAME
+               value: adServiceFailure
+            image: alpine:3.12
+            imagePullPolicy: IfNotPresent
+            command: [ "/bin/sh", "/tmp/scripts/update_flag.sh"]
+            volumeMounts:
+              - mountPath: "/tmp/scripts"
+                name: scripts
+              - mountPath: "/tmp/config"
+                name: flagd-flags
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: kafka-trigger-queue-problems-job-start
+spec:
+  schedule: "0 12 * * *"
+  suspend: false
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          volumes:
+            - name: scripts
+              configMap:
+                name: {{ include "otel-demo.name" . }}-flagd-config-script
+                defaultMode: 0777
+            - name: flagd-flags
+              configMap:
+                name: {{ include "otel-demo.name" . }}-flagd-config
+          containers:
+          - name: execute
+            env:
+             - name: FLAGNAME
+               value: kafkaQueueProblems
+            image: alpine:3.12
+            imagePullPolicy: IfNotPresent
+            command: [ "/bin/sh", "/tmp/scripts/update_flag.sh"]
+            volumeMounts:
+              - mountPath: "/tmp/scripts"
+                name: scripts
+              - mountPath: "/tmp/config"
+                name: flagd-flags
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: cartservice-trigger-failure-job-start
+spec:
+  schedule: "0 13 * * *"
+  suspend: false
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          volumes:
+            - name: scripts
+              configMap:
+                name: {{ include "otel-demo.name" . }}-flagd-config-script
+                defaultMode: 0777
+            - name: flagd-flags
+              configMap:
+                name: {{ include "otel-demo.name" . }}-flagd-config
+          containers:
+          - name: execute
+            env:
+             - name: FLAGNAME
+               value: cartServiceFailure
+            image: alpine:3.12
+            imagePullPolicy: IfNotPresent
+            command: [ "/bin/sh", "/tmp/scripts/update_flag.sh"]
+            volumeMounts:
+              - mountPath: "/tmp/scripts"
+                name: scripts
+              - mountPath: "/tmp/config"
+                name: flagd-flags
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: paymentservice-trigger-failure-job-start
+spec:
+  schedule: "0 14 * * *"
+  suspend: false
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          volumes:
+            - name: scripts
+              configMap:
+                name: {{ include "otel-demo.name" . }}-flagd-config-script
+                defaultMode: 0777
+            - name: flagd-flags
+              configMap:
+                name: {{ include "otel-demo.name" . }}-flagd-config
+          containers:
+          - name: execute
+            env:
+             - name: FLAGNAME
+               value: paymentServiceFailure
+            image: alpine:3.12
+            imagePullPolicy: IfNotPresent
+            command: [ "/bin/sh", "/tmp/scripts/update_flag.sh"]
+            volumeMounts:
+              - mountPath: "/tmp/scripts"
+                name: scripts
+              - mountPath: "/tmp/config"
+                name: flagd-flags
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: paymentservice-trigger-unreachable-job-start
+spec:
+  schedule: "0 15 * * *"
+  suspend: false
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          volumes:
+            - name: scripts
+              configMap:
+                name: {{ include "otel-demo.name" . }}-flagd-config-script
+                defaultMode: 0777
+            - name: flagd-flags
+              configMap:
+                name: {{ include "otel-demo.name" . }}-flagd-config
+          containers:
+          - name: execute
+            env:
+             - name: FLAGNAME
+               value: paymentServiceUnreachable
+            image: alpine:3.12
+            imagePullPolicy: IfNotPresent
+            command: [ "/bin/sh", "/tmp/scripts/update_flag.sh"]
+            volumeMounts:
+              - mountPath: "/tmp/scripts"
+                name: scripts
+              - mountPath: "/tmp/config"
+                name: flagd-flags
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: loadgenerator-trigger-flood-job-start
+spec:
+  schedule: "0 16 * * *"
+  suspend: false
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          volumes:
+            - name: scripts
+              configMap:
+                name: {{ include "otel-demo.name" . }}-flagd-config-script
+                defaultMode: 0777
+            - name: flagd-flags
+              configMap:
+                name: {{ include "otel-demo.name" . }}-flagd-config
+          containers:
+          - name: execute
+            env:
+             - name: FLAGNAME
+               value: loadgeneratorFloodHomepage
+            image: alpine:3.12
+            imagePullPolicy: IfNotPresent
+            command: [ "/bin/sh", "/tmp/scripts/update_flag.sh"]
+            volumeMounts:
+              - mountPath: "/tmp/scripts"
+                name: scripts
+              - mountPath: "/tmp/config"
+                name: flagd-flags
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: frontendproxy-trigger-image-slowload-job-start
+spec:
+  schedule: "0 17 * * *"
+  suspend: true  # Original envoy proxy job is suspended as we moved to ingress-nginx
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          volumes:
+            - name: scripts
+              configMap:
+                name: {{ include "otel-demo.name" . }}-flagd-config-script
+                defaultMode: 0777
+            - name: flagd-flags
+              configMap:
+                name: {{ include "otel-demo.name" . }}-flagd-config
+          containers:
+          - name: execute
+            env:
+             - name: FLAGNAME
+               value: imageSlowLoad
+            image: alpine:3.12
+            imagePullPolicy: IfNotPresent
+            command: [ "/bin/sh", "/tmp/scripts/update_flag.sh"]
+            volumeMounts:
+              - mountPath: "/tmp/scripts"
+                name: scripts
+              - mountPath: "/tmp/config"
+                name: flagd-flags
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: flagd-config-reset-job
+spec:
+  schedule: "*/30 * * * *"
+  suspend: false
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          volumes:
+            - name: scripts
+              configMap:
+                name: {{ include "otel-demo.name" . }}-flagd-config-script
+                defaultMode: 0777
+            - name: flagd-flags
+              configMap:
+                name: {{ include "otel-demo.name" . }}-flagd-config
+          containers:
+          - name: execute
+            env:
+             - name: FLAGNAME
+               value: productCatalogFailure
+            image: alpine:3.12
+            imagePullPolicy: IfNotPresent
+            command: [ "/bin/sh", "/tmp/scripts/stop.sh"]
+            volumeMounts:
+              - mountPath: "/tmp/scripts"
+                name: scripts
+              - mountPath: "/tmp/config"
+                name: flagd-flags
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: productadmin-update-product-job
+spec:
+  schedule: "*/5 * * * *"
+  suspend: false
+  jobTemplate:
+    spec:
+      suspend: false 
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+          - name: execute
+            env:
+             - name: FLAGNAME
+               value: productCatalogFailure
+            image: alpine:3.12
+            imagePullPolicy: IfNotPresent
+            env:
+            - name: PRODUCT_ADMIN_USER
+              value: "product_admin"
+            - name: PRODUCT_ADMIN_PASSWORD
+              value: 'P@$$$$w0rd'
+            - name: PRODUCT_ADMIN_ENDPOINT_URI
+              value: "https://f22tqn1ew3.execute-api.us-east-1.amazonaws.com/Dev" 
+            command: 
+             - "/bin/sh"
+             - "-c"
+             - |
+                apk --update add curl bash coreutils;
+                /bin/bash <<'EOF'
+
+                echo starting;
+                AUTH=$(echo -ne "$PRODUCT_ADMIN_USER:$PRODUCT_ADMIN_PASSWORD" | base64 --wrap 0);
+                curl -k -X GET --header "Authorization: Basic $AUTH" "$PRODUCT_ADMIN_ENDPOINT_URI/product/OLJCESPC7Z";
+                curl -k -X PUT --header "Authorization: Basic $AUTH" --header "Content-Type: application/json" --data '{ "name": "Eclipsmart Travel Refractor Telescope 2026", "description": "Dedicated white-light solar scope for the observer on the go. The 50mm refracting solar scope uses Solar Safe, ISO compliant, full-aperture glass filter material to ensure the safest view of solar events.  The kit comes complete with everything you need, including the dedicated travel solar scope, a Solar Safe finderscope, tripod, a high quality 20mm (18x) Kellner eyepiece and a nylon backpack to carry everything in.  This Travel Solar Scope makes it easy to share the Sun as well as partial and total solar eclipses with the whole family and offers much higher magnifications than you would otherwise get using handheld solar viewers or binoculars.", "picture": "EclipsmartTravelRefractorTelescope.jpg", "priceUsd": {  "currencyCode": "USD",  "units": 129,  "nanos": 950000000 }, "categories": [  "telescopes",  "travel" ]}' "$PRODUCT_ADMIN_ENDPOINT_URI/product/OLJCESPC7Z";
+                echo done;
+
+                EOF
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: productadmin-list-products-job
+spec:
+  schedule: "*/1 * * * *"
+  suspend: true   # Original envoy proxy job is suspended as we moved to ingress-nginx
+  jobTemplate:
+    spec:
+      suspend: false 
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+          - name: execute
+            image: alpine:3.12
+            imagePullPolicy: IfNotPresent
+            env:
+            - name: PRODUCT_ADMIN_USER
+              value: "product_admin"
+            - name: PRODUCT_ADMIN_PASSWORD
+              value: 'P@$$$$w0rd'
+            - name: PRODUCT_ADMIN_ENDPOINT_URI
+              value: {{ .Values.lambda_url }}
+            command: 
+             - "/bin/sh"
+             - "-c"
+             - |
+                apk --update add curl bash coreutils;
+                /bin/bash <<'EOF'
+
+                echo starting;
+                AUTH=$(echo -ne "$PRODUCT_ADMIN_USER:$PRODUCT_ADMIN_PASSWORD" | base64 --wrap 0);
+                curl -k -X GET --header "Authorization: Basic $AUTH" "$PRODUCT_ADMIN_ENDPOINT_URI/product";
+                echo done;
+
+                EOF

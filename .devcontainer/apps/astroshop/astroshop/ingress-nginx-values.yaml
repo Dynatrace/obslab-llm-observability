@@ -1,0 +1,6 @@
+controller:
+  enableAnnotationValidations: true
+  annotations:
+    oneagent.dynatrace.com/inject: "true"
+  podAnnotations:
+    oneagent.dynatrace.com/inject: "true"

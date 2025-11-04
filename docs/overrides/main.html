@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+
+{% block libs %}
+  <!-- Add scripts that need to run before here -->
+  {{ super() }}
+  <!-- Add scripts that need to run afterwards here -->
+    <script type="text/javascript" src="https://js-cdn.dynatrace.com/jstag/1612cf70810/bf81393wlb/43389b873762eb83_complete.js" crossorigin="anonymous"></script>
+{% endblock %}

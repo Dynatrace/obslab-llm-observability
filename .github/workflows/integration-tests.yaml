@@ -1,0 +1,45 @@
+name: integration-tests
+run-name: ${{ github.event.head_commit.message }} - PR integration test
+permissions:
+  contents: write
+on:
+  pull_request:
+    branches:
+      - main
+jobs:
+  codespaces-integration-test-with-dynatrace-deployment:
+    runs-on: ubuntu-24.04
+    # No CI Test should run longer than 10 minutes.
+    timeout-minutes: 10
+    env:
+      DT_ENVIRONMENT: ${{ secrets.DT_ENVIRONMENT }}
+      DT_OPERATOR_TOKEN: ${{ secrets.DT_OPERATOR_TOKEN }}
+      DT_INGEST_TOKEN: ${{ secrets.DT_INGEST_TOKEN }}
+    steps:
+      - name: Commit info
+        run: |
+          echo "Commit SHA: ${{ github.sha }}"
+          echo "Triggered by: ${{ github.actor }}"
+          echo "Repository ${{ github.repository }}"
+          echo "Commit message ${{ github.event.head_commit.message }}" 
+          echo "Event ${{ github.event_name }}"
+          echo "envs" && env
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - name: Add secrets in .env file for running locally with VS Code extension
+        run: |
+            cd .devcontainer 
+            cat <<EOF >> runlocal/.env
+            DT_ENVIRONMENT=$DT_ENVIRONMENT
+            DT_OPERATOR_TOKEN=$DT_OPERATOR_TOKEN
+            DT_INGEST_TOKEN=$DT_INGEST_TOKEN
+            EOF
+            sed -i '/"runArgs": \["--init", "--privileged", "--network=host"\]/c\  "runArgs": ["--init", "--privileged", "--network=host", "--env-file",".devcontainer/runlocal/.env"]' devcontainer.json
+      - name: Test Codespace (devcontainer) build and run commands
+        uses: devcontainers/ci@v0.3
+        with:
+          imageName: shinojosa/dt-enablement
+          cacheFrom: shinojosa/dt-enablement
+          push: never
+          runCmd: |
+            zsh .devcontainer/test/integration.sh

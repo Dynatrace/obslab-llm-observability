@@ -1,0 +1,13 @@
+spec:
+  template:
+    metadata:
+      annotations:
+        oneagent.dynatrace.com/inject: "false"   
+        metadata.dynatrace.com/process.technology: "python" 
+    spec:
+      containers:
+        - name: recommendationservice
+          imagePullPolicy: Always
+          env:
+            - name: OTEL_COLLECTOR_NAME
+              value: 'dynatrace-otel-gateway-collector'

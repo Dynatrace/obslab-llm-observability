@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    meta.helm.sh/release-name: astroshop
+    meta.helm.sh/release-namespace: astroshop
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  creationTimestamp: "2024-12-13T15:21:59Z"
+  generation: 1
+  labels:
+    app.kubernetes.io/managed-by: Helm
+  name: astroshop-frontendproxy-root
+  namespace: astroshop
+  resourceVersion: "64609"
+  uid: a66e097b-e4f9-41e6-a2ef-4784804d324d
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: astroshop.4b1979e0-68dd-4ef1-a694-d6f8c9f7ccbe.dynatrace.training
+    http:
+      paths:
+      - backend:
+          service:
+            name: astroshop-frontend
+            port:
+              number: 8080
+        path: /
+        pathType: Prefix
+status:
+  loadBalancer: {}

@@ -1,0 +1,112 @@
+
+  # Configuration for ActiveGate instances.
+  #
+  activeGate:
+    # Specifies which capabilities will be enabled on ActiveGate instances
+    # The following capabilities can be set:
+    # - routing
+    # - kubernetes-monitoring
+    # - metrics-ingest
+    # - dynatrace-api
+    #
+    capabilities:
+      - routing
+      - kubernetes-monitoring
+    #  - dynatrace-api
+
+    # Optional: Sets how many ActiveGate pods are spawned by the StatefulSet
+    # Defaults to "1"
+    #
+    # replicas: 1
+
+    # Optional: Sets the image used to deploy ActiveGate instances
+    # Defaults to the latest ActiveGate image on the tenant's registry
+    # Example: "ENVIRONMENTID.live.dynatrace.com/linux/activegate:latest"
+    #
+    # image: ""
+
+    # Optional: Sets the activation group for ActiveGate instances
+    #
+    # group: ""
+    group: CLUSTERNAME
+
+    # Optional: Defines a custom properties file providing either as a value or as a reference to a secret
+    # If a reference to a secret is used, the key to the data must be 'customProperties'
+    #
+    # customProperties:
+    #   value: |
+    #     [connectivity]
+    #     networkZone=
+    #   valueFrom: myCustomPropertiesConfigMap
+
+    # Optional: Specifies resource settings for ActiveGate instances
+    # Consumption of the ActiveGate heavily depends on the workload to monitor
+    # The values should be adjusted according to the workload
+    #
+    resources:
+      requests:
+        cpu: 100m
+        memory: 512Mi
+      limits:
+        cpu: 500m
+        memory: 768Mi
+
+    # Optional: Sets a node selector to control on which nodes the ActiveGate will be deployed.
+    # For more information on node selectors, see https://kubernetes.io/docs/tasks/configure-pod-container/assign-pods-nodes/
+    #
+    # nodeSelector: {}
+
+    # Optional: Specifies tolerations to include with the ActiveGate StatefulSet.
+    # For more information on tolerations, see https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+    #
+    # tolerations:
+    # - effect: NoSchedule
+    #   key: node-role.kubernetes.io/master
+    #   operator: Exists
+
+    # Optional: Defines labels added to ActiveGate pods
+    # Can be used to structure workloads
+    #
+    # labels:
+    #   custom: label
+
+    # Optional: Adds additional environment variables to ActiveGate pods
+    #
+    # env: []
+
+    # Optional: Specifies the name of a secret containing a TLS certificate, a TLS key and the TLS key's password to be used by ActiveGate instances
+    # If unset, a self-signed certificate is used
+    # The secret is expected to have the following key-value pairs
+    # server.p12: TLS certificate and TLS key pair in pkcs12 format
+    # password: passphrase to decrypt the TLS certificate and TLS key pair
+    #
+    # tlsSecretName: "my-tls-secret"
+
+    # Optional: Sets the DNS Policy for ActiveGate pods
+    # Defaults to "Default"
+    # For more information on DNS policies, see https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy
+    #
+    # dnsPolicy: "Default"
+
+    # Optional: Specifies the priority class to assign to the ActiveGate Pods
+    # No class is set by default
+    # For more information on priority classes, see https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/
+    #
+    # priorityClassName: priority-class
+
+    # Optional: Adds additional annotations to the ActiveGate pods
+    #
+    # annotations:
+    #   annotation-key: annotation-value
+
+    # Optional: Adds TopologySpreadConstraints to the ActiveGate pods
+    # For more information on TopologySpreadConstraints, see https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/
+    #
+    # topologySpreadConstraints: []
+  #templates:
+  #  extensionExecutionController:
+  #    imageRef:
+  #      repository: public.ecr.aws/dynatrace/dynatrace-eec
+  #      tag: 1.305.99.20250115-133014
+  #extensions: {}
+  #logMonitoring: {}

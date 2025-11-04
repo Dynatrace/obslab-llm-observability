@@ -1,0 +1,38 @@
+ingressHostUrl: "astroshop-frontendproxy"
+collector_tenant_endpoint: donotstore
+collector_tenant_token: donotstore
+
+opentelemetry-demo:
+  components:
+    loadgenerator:
+      envOverrides:
+        - name: LOCUST_USERS
+          value: "1"
+        - name: LOCUST_HOST
+          value: "http://astroshop-frontendproxy:8080"
+    frontend:
+      envOverrides:
+      - name: DT_LOGLEVELCON # https://www.dynatrace.com/support/help/shortlink/agent-logging
+        value: "" # info
+      - name: DT_LOGCON_PROC
+        value: "" # stdout
+      - name: DT_LOGGING_DESTINATION
+        value: "" # stdout 
+      - name: DT_LOGGING_NODEJS_FLAGS
+        value: ''  # Exporter=true,SpanProcessor=true,Propagator=true,Core=true
+      - name: OTEL_TRACES_EXPORTER
+        value: 'none' # 'console', 'none', 'otlp'
+      - name: OTEL_LOGS_EXPORTER
+        value: 'none' # 'console', 'none', 'otlp'
+      - name: OTEL_METRICS_EXPORTER
+        value: 'console,otlp' # 'console', 'none', 'otlp'
+      - name: OTEL_NODE_DISABLED_INSTRUMENTATIONS # https://github.com/open-telemetry/opentelemetry-js-contrib/blob/167dced09de0d2104561542b4f83047fa656505f/metapackages/auto-instrumentations-node/package.json#L51
+        value: ''   # other examples - http,grpc,dns,net
+      - name: NODE_OPTIONS
+        value: '' # - do not instrument at all with things like '-r ./Instrumentation.js' Avoid duplicate spans from OA and Otel - https://opentelemetry.io/docs/zero-code/js/
+      - name: PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT # This is used on the client-side for sending traces to the backend
+        value: ''
+      - name: NEXT_OTEL_VERBOSE
+        value: '0'
+      - name: ENV_PLATFORM
+        value: 'DEVCONTAINER'

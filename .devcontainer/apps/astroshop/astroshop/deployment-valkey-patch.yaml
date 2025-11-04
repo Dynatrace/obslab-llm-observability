@@ -1,0 +1,19 @@
+spec:
+  template:
+    metadata:
+      annotations:
+        metrics.dynatrace.com/port: "9121"  # https://www.dynatrace.com/news/blog/simplify-observability-for-all-your-custom-metrics-part-4-prometheus/
+        metrics.dynatrace.com/scrape: "true" 
+        oneagent.dynatrace.com/inject: "false"   
+        metadata.dynatrace.com/process.technology: "redis"    
+    spec:
+      containers:
+        - name: valkey
+          imagePullPolicy: Always
+          env:
+            - name: OTEL_COLLECTOR_NAME
+              value: 'dynatrace-otel-gateway-collector' # TODO: cannot use 'localhost' for sidecar so currently set to '127.0.0.1', as sending to the OpenTelemetry Collector sidecar in valkey fails
+        - name: valkey-exporter 
+          image: oliver006/redis_exporter:v1.14.0
+          ports: 
+          - containerPort: 9121 

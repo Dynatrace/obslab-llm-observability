@@ -1,0 +1,24 @@
+spec:
+  template:
+    metadata:
+      annotations:
+        oneagent.dynatrace.com/inject: "true"
+        metadata.dynatrace.com/process.technology: "kafka" 
+    spec:
+      containers:
+        - name: kafka
+          imagePullPolicy: Always
+          resources:
+            limits:
+                memory: 600Mi  # To run OneAgent we reccomend at least 512Mi, Original 600Mi - https://docs.dynatrace.com/docs/setup-and-configuration/dynatrace-oneagent/memory-requirements
+          env:
+            - name: KAFKA_OPTS
+              value: '-Dotel.jmx.target.system=kafka-broker'  
+            - name: DT_LOGLEVELCON # https://www.dynatrace.com/support/help/shortlink/agent-logging
+              value: "" # info
+            - name: DT_LOGCON_PROC
+              value: "" # stdout
+            - name: DT_LOGGING_DESTINATION
+              value: "" # stdout 
+            - name: DT_LOGGING_JAVA_FLAGS
+              value: ''  # Exporter=true,SpanProcessor=true,Propagator=true,Core=true

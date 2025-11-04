@@ -1,0 +1,205 @@
+apiVersion: opentelemetry.io/v1beta1
+kind: OpenTelemetryCollector
+metadata:
+  name: dynatrace-otel-gateway
+  annotations:
+    metrics.dynatrace.com/port: "8888"  # https://www.dynatrace.com/news/blog/simplify-observability-for-all-your-custom-metrics-part-4-prometheus/
+    metrics.dynatrace.com/scrape: "true"
+    oneagent.dynatrace.com/inject: "false"   
+spec:
+  envFrom:
+  - secretRef:
+      name: dynatrace-otelcol-dt-api-credentials
+  env:
+  - name: MY_POD_IP
+    valueFrom:
+      fieldRef:
+        fieldPath: status.podIP
+  mode: "deployment"
+  # image: "ghcr.io/dynatrace/dynatrace-otel-collector/dynatrace-otel-collector:0.14.0"
+  image: "otel/opentelemetry-collector-contrib:0.108.0"
+  resources:
+    limits:
+      memory: 512Mi
+  volumeMounts:
+    - mountPath: /hostfs
+      name: hostfs
+      readOnly: true
+  volumes:
+  - name: hostfs
+    hostPath:
+      path: /
+  config:
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: ${env:MY_POD_IP}:4317
+          http:
+            endpoint: ${env:MY_POD_IP}:4318
+      hostmetrics:
+        root_path: /hostfs
+        scrapers:
+          cpu:
+            metrics:
+              system.cpu.utilization:
+                enabled: true
+          disk: {}
+          load: {}
+          filesystem:
+            exclude_mount_points:
+              mount_points:
+                - /dev/*
+                - /proc/*
+                - /sys/*
+                - /run/k3s/containerd/*
+                - /var/lib/docker/*
+                - /var/lib/kubelet/*
+                - /snap/*
+              match_type: regexp
+            exclude_fs_types:
+              fs_types:
+                - autofs
+                - binfmt_misc
+                - bpf
+                - cgroup2
+                - configfs
+                - debugfs
+                - devpts
+                - devtmpfs
+                - fusectl
+                - hugetlbfs
+                - iso9660
+                - mqueue
+                - nsfs
+                - overlay
+                - proc
+                - procfs
+                - pstore
+                - rpc_pipefs
+                - securityfs
+                - selinuxfs
+                - squashfs
+                - sysfs
+                - tracefs
+              match_type: strict
+          memory:
+            metrics:
+              system.memory.utilization:
+                enabled: true
+          network: {}
+          paging: {}
+          processes: {}
+          process:
+            mute_process_exe_error: true
+            mute_process_io_error: true
+            mute_process_user_error: true      
+    processors:
+      cumulativetodelta: {}
+      memory_limiter:
+        check_interval: 1s
+        limit_percentage: 75
+        spike_limit_percentage: 15
+      batch:
+        send_batch_size: 10000
+        timeout: 10s
+      resourcedetection/aks:
+        detectors: [env, aks]
+        timeout: 2s
+        override: false
+      k8sattributes:
+        extract:
+          metadata:
+            - k8s.pod.name
+            - k8s.pod.uid
+            - k8s.deployment.name
+            - k8s.statefulset.name
+            - k8s.daemonset.name
+            - k8s.cronjob.name
+            - k8s.namespace.name
+            - k8s.node.name
+            - k8s.cluster.uid
+        pod_association:
+          - sources:
+            - from: resource_attribute
+              name: k8s.pod.name
+            - from: resource_attribute
+              name: k8s.namespace.name
+          - sources:
+            - from: resource_attribute
+              name: k8s.pod.ip
+          - sources:
+            - from: resource_attribute
+              name: k8s.pod.uid
+          - sources:
+            - from: connection
+      transform:
+        error_mode: ignore
+        trace_statements:
+          - context: resource
+            statements:
+              - set(attributes["dt.kubernetes.workload.kind"], "statefulset") where IsString(attributes["k8s.statefulset.name"])
+              - set(attributes["dt.kubernetes.workload.name"], attributes["k8s.statefulset.name"]) where IsString(attributes["k8s.statefulset.name"])
+              - set(attributes["dt.kubernetes.workload.kind"], "deployment") where IsString(attributes["k8s.deployment.name"])
+              - set(attributes["dt.kubernetes.workload.name"], attributes["k8s.deployment.name"]) where IsString(attributes["k8s.deployment.name"])
+              - set(attributes["dt.kubernetes.workload.kind"], "daemonset") where IsString(attributes["k8s.daemonset.name"])
+              - set(attributes["dt.kubernetes.workload.name"], attributes["k8s.daemonset.name"]) where IsString(attributes["k8s.daemonset.name"])
+              - set(attributes["dt.kubernetes.cluster.id"], attributes["k8s.cluster.uid"]) where IsString(attributes["k8s.cluster.uid"])
+          - context: span
+            statements:
+              # - set(name, "NO_NAME") where name == ""    
+              # could be removed when https://github.com/vercel/next.js/pull/64852 is fixed upstream
+              - replace_pattern(name, "\\?.*", "")
+              - replace_match(name, "GET /api/products/*", "GET /api/products/{productId}")
+        log_statements:
+          - context: resource
+            statements:
+              - set(attributes["dt.kubernetes.workload.kind"], "statefulset") where IsString(attributes["k8s.statefulset.name"])
+              - set(attributes["dt.kubernetes.workload.name"], attributes["k8s.statefulset.name"]) where IsString(attributes["k8s.statefulset.name"])
+              - set(attributes["dt.kubernetes.workload.kind"], "deployment") where IsString(attributes["k8s.deployment.name"])
+              - set(attributes["dt.kubernetes.workload.name"], attributes["k8s.deployment.name"]) where IsString(attributes["k8s.deployment.name"])
+              - set(attributes["dt.kubernetes.workload.kind"], "daemonset") where IsString(attributes["k8s.daemonset.name"])
+              - set(attributes["dt.kubernetes.workload.name"], attributes["k8s.daemonset.name"]) where IsString(attributes["k8s.daemonset.name"])
+              - set(attributes["dt.kubernetes.cluster.id"], attributes["k8s.cluster.uid"]) where IsString(attributes["k8s.cluster.uid"]) 
+        metric_statements:
+          - context: resource
+            statements:
+              - set(attributes["dt.kubernetes.workload.kind"], "statefulset") where IsString(attributes["k8s.statefulset.name"])
+              - set(attributes["dt.kubernetes.workload.name"], attributes["k8s.statefulset.name"]) where IsString(attributes["k8s.statefulset.name"])
+              - set(attributes["dt.kubernetes.workload.kind"], "deployment") where IsString(attributes["k8s.deployment.name"])
+              - set(attributes["dt.kubernetes.workload.name"], attributes["k8s.deployment.name"]) where IsString(attributes["k8s.deployment.name"])
+              - set(attributes["dt.kubernetes.workload.kind"], "daemonset") where IsString(attributes["k8s.daemonset.name"])
+              - set(attributes["dt.kubernetes.workload.name"], attributes["k8s.daemonset.name"]) where IsString(attributes["k8s.daemonset.name"])
+              - set(attributes["dt.kubernetes.cluster.id"], attributes["k8s.cluster.uid"]) where IsString(attributes["k8s.cluster.uid"])
+          # - context: metric
+          #   statements:
+          #     - set(attributes["span.name"], "NO_NAME") where IsString(attributes["span.name"]) and attributes["span.name"] == ""                               
+
+    exporters:
+      # NOTE: Prior to v0.86.0 use `logging` instead of `debug`.
+      debug:
+        verbosity: basic
+        sampling_initial: 5
+        sampling_thereafter: 2000
+      otlphttp:
+        endpoint: "${env:DT_ENDPOINT}"
+        headers:
+          Authorization: "Api-Token ${env:DT_API_TOKEN}"
+    
+    connectors:
+      spanmetrics: {}
+
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          processors: [memory_limiter, resourcedetection/aks, k8sattributes, transform, batch]
+          exporters: [otlphttp, spanmetrics, debug] # debug
+        metrics:
+          receivers: [otlp, spanmetrics] # hostmetrics - permission denied
+          processors: [memory_limiter, cumulativetodelta, resourcedetection/aks, k8sattributes, transform, batch]
+          exporters: [otlphttp, debug] # debug
+        logs:
+          receivers: [otlp]
+          processors: [memory_limiter, resourcedetection/aks, k8sattributes, transform, batch]
+          exporters: [otlphttp, debug] # debug

@@ -1,0 +1,92 @@
+
+  # Configuration for AppOnly
+  #
+  oneAgent:
+    applicationMonitoring: {}
+
+
+      # Optional: Adds resource settings for OneAgent container
+      # Consumption of the OneAgent heavily depends on the workload to monitor
+      # The values should be adjusted according to the workload
+      #
+      # oneAgentResources:
+      #   requests:
+      #     cpu: 100m
+      #     memory: 512Mi
+      #   limits:
+      #     cpu: 300m
+      #     memory: 1.5Gi
+
+      # Optional: additional environment variables to add to the OneAgent Pods.
+      #
+      # env: []
+      #env:
+      #  - name: ONEAGENT_ENABLE_VOLUME_STORAGE
+      #    value: "false"
+
+      # Optional: arguments to add to the OneAgent installer.
+      # Available options: https://www.dynatrace.com/support/help/shortlink/linux-custom-installation
+      # Limitations: https://www.dynatrace.com/support/help/shortlink/oneagent-docker#limitations
+      #
+      # args: []
+      
+      #args:
+      #  - --set-host-group=CLUSTERNAME
+
+      # Optional: Enables or disables automatic updates of OneAgent pods
+      # By default, if a new version is available, the OneAgent pods are restart to apply the update
+      # If set to "false", this behaviour is disabled
+      # Defaults to "true"
+      #
+      # autoUpdate: true
+
+      # Optional: Sets the DNS Policy for OneAgent pods
+      # Defaults to "ClusterFirstWithHostNet"
+      # For more information on DNS policies, see https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy
+      #
+      # dnsPolicy: "ClusterFirstWithHostNet"
+
+      # Optional: Adds additional annotations to the OneAgent pods
+      #
+      # annotations:
+      #   annotation-key: annotation-value
+
+      # Optional: Defines labels added to OneAgent pods
+      # Can be used to structure workloads
+      #
+      # labels:
+      #   custom: label
+
+      # Optional: Sets the URI for the image containing the OneAgent installer used by the DaemonSet
+      # Defaults to the latest OneAgent image on the tenant's registry
+      #
+      # image:
+
+      # Optional: If specified, indicates the OneAgent version to use
+      # Defaults to "latest"
+      # The version is expected to be provided in the semver format
+      # Example: {major.minor.release}, e.g., "1.200.0"
+      #
+      # version:
+
+      # Optional: Defines resources requests and limits for the initContainer
+      # See more: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers
+      #
+      # initResources:
+      #   requests:
+      #     cpu: 100m
+      #     memory: 512Mi
+      #   limits:
+      #     cpu: 300m
+      #     memory: 1.5Gi
+
+      # Optional: The URI of the image that contains the codemodules specific OneAgent that will be injected into pods and applications.
+      # For an example of a Dockerfile creating such an image, see https://dt-url.net/operator-docker-samples
+      #
+      # codeModulesImage: ""
+  templates:
+    logMonitoring:
+      imageRef:
+        repository: public.ecr.aws/dynatrace/dynatrace-logmodule
+        tag: 1.319.83.20250909-095914 # TODO: update to use an environment variable
+  logMonitoring: {}

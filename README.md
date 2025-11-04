@@ -1,73 +1,29 @@
-# EasyTravel GPT Travel Advisor
+# <img src="https://cdn.bfldr.com/B686QPH3/at/w5hnjzb32k5wcrcxnwcx4ckg/Dynatrace_signet_RGB_HTML.svg?auto=webp&format=pngg" alt="DT logo" width="30"> Enablement Gen AI & LLM Observability
 
-Demo application for giving travel advice written in Python. Observability signals by [OpenTelemetry](https://opentelemetry.io).
+[![Davis CoPilot](https://img.shields.io/badge/Davis%20CoPilot-AI%20Powered-purple?logo=dynatrace&logoColor=white)](https://dynatrace-wwse.github.io/codespaces-framework/dynatrace-integration/#mcp-server-integration)
+[![dt-badge](https://img.shields.io/badge/Powered_by-DT_Enablement-8A2BE2?logo=dynatrace)](https://dynatrace-wwse.github.io/codespaces-framework/)
+[![Downloads](https://img.shields.io/docker/pulls/shinojosa/dt-enablement?logo=docker)](https://hub.docker.com/r/shinojosa/dt-enablement)
+![Integration tests](https://github.com/dynatrace/obslab-llm-observability/actions/workflows/integration-tests.yaml/badge.svg)
+[![Version](https://img.shields.io/github/v/release/dynatrace/obslab-llm-observability?color=blueviolet)](https://github.com/dynatrace/obslab-llm-observability/releases)
+[![Commits](https://img.shields.io/github/commits-since/dynatrace/obslab-llm-observability/latest?color=ff69b4&include_prereleases)](https://github.com/dynatrace/obslab-llm-observability/graphs/commit-activity)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg?color=green)](https://github.com/dynatrace/obslab-llm-observability/blob/main/LICENSE)
+[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Live-green)](https://dynatrace.github.io/obslab-llm-observability/)
 
-Uses OpenAI ChatGPT to generate advice for a given destination.
+___
 
-> **Note**
-> This product is not officially supported by Dynatrace!
+Dynatrace Gen AI & LLM observability provides complete visibility into all aspects of LLMs, including applications, prompts, data sources, and outputs for LLMs' correct, consistent operation at all times across all domains. The Dynatrace Platform can:
 
-![title](screenshot.png)
+- Seamlessly integrate across the full AI application stack
+- Help reduce the cost and improve the performance of your AI and LLM stack
+- Build trust in LLM inputs and outputs
+- Explain and trace back your AI-powered application outputs
+- Reduce compliance risk for your Generative AI application
 
-## [>> Click here to start the hands on tutorial](https://dynatrace-perfclinics.github.io/obslab-llm-observability)
+<p align="center">
+    <img src="docs/img/ai_travel_advisor.jpg" alt="AI Travel Advisor" width="800"/>
+</p>
 
+In this tutorial we will learn how it is easy to observe an AI application (AI Travel advisor) that uses [Ollama](https://ollama.com/) as Large Language Model, [Weaviate](https://weaviate.io/) as Vector Database, and [LangChain](https://www.langchain.com/) as an orchestrator to create [Retrieval augmented generation (RAG)](https://python.langchain.com/docs/concepts/rag/) and [Agentic](https://python.langchain.com/docs/concepts/agents/) AI Pipelines.
 
-## Developer Information Below
-
-### Run Locally with Weaviate Cache
-
-- Download the [latest Weaviate binary from GitHub](https://github.com/weaviate/weaviate/releases/latest). Add it to your `PATH`.
-- Download the [latest Dynatrace OpenTelemetry collector binary from GitHub](https://github.com/Dynatrace/dynatrace-otel-collector/releases). Add it to your `PATH`.
-
-```
-##### 1. Start Weaviate
-
-set PROMETHEUS_MONITORING_ENABLED=true
-weaviate --host 0.0.0.0 --port 8000 --scheme http
-
-##### 2. Configure these variables and Start Collector
-#####  Token needs: logs.ingest, metrics.ingest and openTelemetryTrace.ingest permissions
-
-set DT_ENDPOINT=https://abc12345.live.dynatrace.com/api/v2/otlp
-set API_TOKEN=dt0c01.******.******
-dynatrace-otel-collector.exe --config ./run-locally/otelcol-config.yaml
-
-##### Start app
-set OPENAI_API_KEY=sk-proj-**********
-set WEAVIATE_ENDPOINT=http://localhost:8000
-# Disable usage telemetry that is sent to Traceloop
-set TRACELOOP_TELEMETRY=false
-python app.py
-```
-
-![opentelemetry trace](.devcontainer/images/get-completion-trace.png)
-
---------------------------
-
-### Deploy on a Local K8S Cluster
-
-You will need [Docker](https://docs.docker.com/engine/install/) or [Podman](https://podman.io/docs/installation) installed and [Helm](https://helm.sh/docs/intro/install/).
-
-`git clone` this repository locally:
-
-```bash
-git clone https://github.com/dynatrace-perfclinics/obslab-llm-observability
-cd traveladvisor
-```
-
-Create a cluster if you do not already have one:
-```bash
-kind create cluster --config .devcontainer/kind-cluster.yml --wait 300s
-```
-
-Customise and set some environment variables
-```
-export DT_ENDPOINT=https://abc12345.live.dynatrace.com
-export DT_TOKEN=TODO
-export OPEN_AI_TOKEN=******
-```
-
-Run the deployment script:
-```bash
-.devcontainer/deployment.sh
-```
+Ready to learn more about Gen AI & LLM Observability? 
+## [Yes, let's start the enablement!](https://dynatrace.github.io/obslab-llm-observability)

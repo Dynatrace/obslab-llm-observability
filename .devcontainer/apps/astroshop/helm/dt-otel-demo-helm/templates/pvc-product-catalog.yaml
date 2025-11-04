@@ -1,0 +1,11 @@
+#apiVersion: v1
+#kind: PersistentVolumeClaim
+#metadata:
+#  name:  {{ include "otel-demo.name" . }}-product-catalog-storage
+#spec:
+#  accessModes:
+#  - ReadWriteMany
+#  storageClassName: {{ .Values.prodCatalogPvcStorageClass }}
+#  resources:
+#    requests:
+#      storage: {{ .Values.prodCatalogPvcSize }}

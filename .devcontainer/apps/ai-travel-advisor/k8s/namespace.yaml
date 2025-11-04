@@ -1,0 +1,7 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ai-travel-advisor
+  labels:
+    name: ai-travel-advisor

@@ -1,0 +1,43 @@
+apiVersion: "networking.k8s.io/v1"
+kind: Ingress
+metadata:
+  name: astroshop-frontendproxy-rewrite
+  annotations:
+    nginx.ingress.kubernetes.io/whitelist-source-range: 10.224.0.0/12,195.50.84.64/27,83.164.160.102/32,83.164.153.224/28,80.80.253.56/32,213.143.108.80/29,157.25.19.96/27,82.177.196.146/32,144.121.39.106/32,50.221.151.250/32,50.247.212.21/32,50.219.104.42/32,71.24.151.161/32,12.188.200.30/32,64.85.148.114/32,216.176.22.146/32,50.219.104.50/32,50.76.51.61/32
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    # nginx.ingress.kubernetes.io/enable-opentelemetry: "true"
+    # nginx.ingress.kubernetes.io/opentelemetry-trust-incoming-span: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: "astroshop-stg.k8s-demo.dynatracelabs.com"
+      http:
+        paths:
+          - path: /images/(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: astroshop-imageprovider
+                port:
+                  number: 8081
+          - path: /loadgen/(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: astroshop-loadgenerator
+                port:
+                  number: 8089
+          - path: /flagservice/(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: astroshop-flagd
+                port:
+                  number: 8013
+          - path: /(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: astroshop-frontend
+                port:
+                  number: 8080

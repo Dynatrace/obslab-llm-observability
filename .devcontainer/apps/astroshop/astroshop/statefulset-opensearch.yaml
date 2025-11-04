@@ -1,0 +1,19 @@
+spec:
+  template:
+    metadata:
+      annotations:
+        oneagent.dynatrace.com/inject: "true"
+        metadata.dynatrace.com/process.technology: "elasticsearch" 
+    spec:
+      containers:
+        - name: opensearch
+          imagePullPolicy: Always
+          env:
+            - name: DT_LOGLEVELCON # https://www.dynatrace.com/support/help/shortlink/agent-logging
+              value: "" # info
+            - name: DT_LOGCON_PROC
+              value: "" # stdout
+            - name: DT_LOGGING_DESTINATION
+              value: "" # stdout 
+            - name: DT_LOGGING_JAVA_FLAGS
+              value: ''  # Exporter=true,SpanProcessor=true,Propagator=true,Core=true

@@ -1,0 +1,16 @@
+spec:
+  template:
+    metadata:
+      annotations:
+        oneagent.dynatrace.com/inject: "false"   
+        metadata.dynatrace.com/process.technology: "Java"        
+    spec:
+      containers:
+        - name: frauddetectionservice
+          image: ghcr.io/open-telemetry/demo:1.12.0-frauddetectionservice
+          imagePullPolicy: Always
+          env:
+            - name: OTEL_COLLECTOR_NAME
+              value: 'dynatrace-otel-gateway-collector'
+            - name: JAVA_TOOL_OPTIONS
+              value: '-javaagent:/app/opentelemetry-javaagent.jar' # '-javaagent:/app/opentelemetry-javaagent.jar' # - Duplicate spans from OA and Otel are avoided automatically - https://docs.dynatrace.com/docs/shortlink/opentelemetry-oneagent#java-span-dropping

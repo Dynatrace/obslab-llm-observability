@@ -1,0 +1,21 @@
+spec:
+  template:
+    metadata:
+      annotations:
+        metrics.dynatrace.com/port: "9113"  # https://www.dynatrace.com/news/blog/simplify-observability-for-all-your-custom-metrics-part-4-prometheus/
+        metrics.dynatrace.com/scrape: "true" 
+        oneagent.dynatrace.com/inject: "false"   
+        metadata.dynatrace.com/process.technology: "nginx"       
+    spec:
+      containers:
+        - name: imageprovider
+          image: ghcr.io/open-telemetry/demo:1.12.0-imageprovider
+          imagePullPolicy: Always
+          env:
+            - name: OTEL_COLLECTOR_NAME
+              value: 'dynatrace-otel-gateway-collector'
+        - name: ngtinx-exporter 
+          image: nginx/nginx-prometheus-exporter:1.3.0
+          args: ["--nginx.scrape-uri=http://localhost:8081/status"]
+          ports: 
+            - containerPort: 9113 

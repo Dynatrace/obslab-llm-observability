@@ -1,0 +1,40 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"networking.k8s.io/v1","kind":"Ingress","metadata":{"annotations":{"meta.helm.sh/release-name":"astroshop","meta.helm.sh/release-namespace":"astroshop"},"labels":{"app.kubernetes.io/component":"frontendproxy","app.kubernetes.io/instance":"astroshop","app.kubernetes.io/managed-by":"Helm","app.kubernetes.io/name":"astroshop-frontendproxy","app.kubernetes.io/part-of":"opentelemetry-demo","app.kubernetes.io/version":"1.11.1","helm.sh/chart":"opentelemetry-demo-0.32.8","opentelemetry.io/name":"astroshop-frontendproxy"},"name":"astroshop-frontendproxy","namespace":"astroshop"},"spec":{"ingressClassName":"traefik","rules":[{"host":"astroshop.4b1979e0-68dd-4ef1-a694-d6f8c9f7ccbe.dynatrace.training","http":{"paths":[{"backend":{"service":{"name":"astroshop-frontend","port":{"number":8080}}},"path":"/","pathType":"ImplementationSpecific"}]}}]}}
+    meta.helm.sh/release-name: astroshop
+    meta.helm.sh/release-namespace: astroshop
+  creationTimestamp: "2024-12-13T15:12:49Z"
+  generation: 3
+  labels:
+    app.kubernetes.io/component: frontendproxy
+    app.kubernetes.io/instance: astroshop
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: astroshop-frontendproxy
+    app.kubernetes.io/part-of: opentelemetry-demo
+    app.kubernetes.io/version: 1.11.1
+    helm.sh/chart: opentelemetry-demo-0.32.8
+    opentelemetry.io/name: astroshop-frontendproxy
+  name: astroshop-frontendproxy
+  namespace: astroshop
+  resourceVersion: "64534"
+  uid: cf8df986-5479-41df-98ca-faba73e3b0da
+spec:
+  ingressClassName: traefik
+  rules:
+  - host: astroshop.4b1979e0-68dd-4ef1-a694-d6f8c9f7ccbe.dynatrace.training
+    http:
+      paths:
+      - backend:
+          service:
+            name: astroshop-frontend
+            port:
+              number: 8080
+        path: /
+        pathType: ImplementationSpecific
+status:
+  loadBalancer:
+    ingress:
+    - ip: 10.0.101.123
