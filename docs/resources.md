@@ -17,11 +17,12 @@
 - [Dynatrace Blog](https://www.dynatrace.com/news/blog/){target="_blank"}
 
 ### Miscellaneous
-
+<!--TODO: Links this in internal pages 
 - [Highspot - How to sell AI Observability](https://dynatrace.highspot.com/items/680626e8b6f0c6d00c74355f){target="_blank"}
 - [SE Demo Pitch Deck](https://dynatrace.sharepoint.com/:p:/s/gtm/EbGsvrquWFtKiYve9mpIpdwByHmUjIwEnNuZknTulTXXMw?e=NLcTdZ){target="_blank"}
 - [Customer Pitch Deck](https://dynatrace.sharepoint.com/:p:/s/MarketingComms/EXFG93IjQLtPpQYpmT_o3AgBvVtAm7XeB8ZTjdB-gKaWMw?e=6dia7B){target="_blank"}
-- [App/Ready-Made dashboards that can be installed to all DPS/Saas instances](https://wkf10640.apps.dynatrace.com/ui/apps/dynatrace.hub/browse/ai-llm-observability?details=dynatrace.genai.observability&detailsTab=contents){target="_blank"}
+-->
+- [App/Ready-Made dashboards from the Playground that can be installed to all DPS/Saas instances](https://wkf10640.apps.dynatrace.com/ui/apps/dynatrace.hub/browse/ai-llm-observability?details=dynatrace.genai.observability&detailsTab=contents){target="_blank"}
 
 <div class="grid cards" markdown>
 - [What's Next? :octicons-arrow-right-24:](whats-next.md)
