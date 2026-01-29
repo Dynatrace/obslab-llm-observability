@@ -1,0 +1,34 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+      
+  filelog:
+    include: [/var/log/run.log]
+
+processors:
+  cumulativetodelta:
+
+exporters:
+  debug:
+    verbosity: detailed
+  otlphttp:
+    endpoint: "${env:DT_ENDPOINT}/api/v2/otlp"
+    headers:
+      Authorization: "Api-Token ${env:API_TOKEN}"
+
+service:
+  pipelines:
+    metrics:
+      receivers: [otlp]
+      processors: [cumulativetodelta]
+      exporters: [debug, otlphttp]
+    traces:
+      receivers: [otlp]
+      exporters: [debug, otlphttp]
+    logs:
+      receivers: [otlp, filelog]
+      exporters: [debug, otlphttp]
