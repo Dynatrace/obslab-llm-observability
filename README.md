@@ -2,72 +2,91 @@
 
 Demo application for giving travel advice written in Python. Observability signals by [OpenTelemetry](https://opentelemetry.io).
 
-Uses OpenAI ChatGPT to generate advice for a given destination.
+Uses a locally running model (qwen3:0.6b) running in Docker to generate advice for a given destination.
+
+App also contains a guardrail to (try to) prevent misuse of the application.
 
 > **Note**
 > This product is not officially supported by Dynatrace!
 
 ![title](screenshot.png)
 
-## [>> Click here to start the hands on tutorial](https://dynatrace-perfclinics.github.io/obslab-llm-observability)
+## Prerequisites
 
+* Docker or Podman installed
+* Python 3 installed
+* Dynatrace environment (if you need one, sign up for a [free trial here](https://dt-url.net/trial))
 
-## Developer Information Below
-
-### Run Locally with Weaviate Cache
-
-- Download the [latest Weaviate binary from GitHub](https://github.com/weaviate/weaviate/releases/latest). Add it to your `PATH`.
-- Download the [latest Dynatrace OpenTelemetry collector binary from GitHub](https://github.com/Dynatrace/dynatrace-otel-collector/releases). Add it to your `PATH`.
+## Create a Virtual Environment
 
 ```
-##### 1. Start Weaviate
+python -m venv .
+Scripts\activate.bat
+```
 
-set PROMETHEUS_MONITORING_ENABLED=true
-weaviate --host 0.0.0.0 --port 8000 --scheme http
+## Install Dependencies
 
-##### 2. Configure these variables and Start Collector
-#####  Token needs: logs.ingest, metrics.ingest and openTelemetryTrace.ingest permissions
+```
+pip install -r requirements.txt
+```
 
-set DT_ENDPOINT=https://abc12345.live.dynatrace.com/api/v2/otlp
-set API_TOKEN=dt0c01.******.******
-dynatrace-otel-collector.exe --config ./run-locally/otelcol-config.yaml
+## Upload Dynatrace Notebook
 
-##### Start app
-set OPENAI_API_KEY=sk-proj-**********
-set WEAVIATE_ENDPOINT=http://localhost:8000
-# Disable usage telemetry that is sent to Traceloop
-set TRACELOOP_TELEMETRY=false
+In Dynatrace:
+
+* Press `ctrl + k` and search for `Notebooks`
+* Upload [dynatrace/notebooks/AI Observability - Hands On.json](dynatrace/notebooks/AI%20Observability%20-%20Hands%20On.json) using the upload button
+
+## Generate API Token
+
+In Dynatrace:
+
+* Press `ctrl + k` and search for `Access tokens`
+* Create a new token with the following permissions:
+    * `metrics.ingest`
+    * `logs.ingest`
+    * `openTelemetryTrace.ingest`
+
+Make a note of your API token.
+
+Next, make a note of your environment ID. It is the first portion of the URL.
+
+For example, `abc12345` is the environment ID of `https://abc12345.apps.dynatrace.com`
+
+You'll need these two pieces of data later.
+
+## Start Ollama & Pull Model
+
+Start Ollama running locally on the standard port of `11434` and pull the `qwen3:0.6b` model.
+
+```
+docker pull ollama/ollama:0.13.3
+docker run -d -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama:0.13.3
+docker exec -it ollama ollama pull qwen3:0.6b
+```
+
+## Start Collector
+
+The application(s) will send OpenTelemetry data to this collector. The collector will then process and forward the data to your Dynatrace environment.
+
+Update the variables below as per YOUR details then start the collector.
+
+Leave this running.
+
+```
+set DT_ENDPOINT=https://abc12345.live.dynatrace.com
+set API_TOKEN=dt0c01.**********.************
+docker run -p 4318:4318 -v collector.yaml:/etc/otelcol/otel-collector-config.yaml -v run.log:/var/log/run.log -e DT_ENDPOINT=%DT_ENDPOINT% -e API_TOKEN=%API_TOKEN% ghcr.io/dynatrace/dynatrace-otel-collector/dynatrace-otel-collector:0.40.0 --config=/etc/otelcol/otel-collector-config.yaml
+```
+
+## Start Application
+
+Start the Travel Advisor application which can be accessed via `http://localhost:8080`
+
+```
 python app.py
 ```
 
-![opentelemetry trace](.devcontainer/images/get-completion-trace.png)
+## Start Tutorial
 
---------------------------
-
-### Deploy on a Local K8S Cluster
-
-You will need [Docker](https://docs.docker.com/engine/install/) or [Podman](https://podman.io/docs/installation) installed and [Helm](https://helm.sh/docs/intro/install/).
-
-`git clone` this repository locally:
-
-```bash
-git clone https://github.com/dynatrace-perfclinics/obslab-llm-observability
-cd traveladvisor
-```
-
-Create a cluster if you do not already have one:
-```bash
-kind create cluster --config .devcontainer/kind-cluster.yml --wait 300s
-```
-
-Customise and set some environment variables
-```
-export DT_ENDPOINT=https://abc12345.live.dynatrace.com
-export DT_TOKEN=TODO
-export OPEN_AI_TOKEN=******
-```
-
-Run the deployment script:
-```bash
-.devcontainer/deployment.sh
-```
+Open the "AI Observability - Hands On" notebook in Dynatrace and follow the tutorial.
