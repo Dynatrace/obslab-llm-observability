@@ -1,10 +1,15 @@
-# EasyTravel GPT Travel Advisor
+# AI Observability Hands On with Local Guardrails and Tool Calling
 
-Demo application for giving travel advice written in Python. Observability signals by [OpenTelemetry](https://opentelemetry.io).
+This branch contains two demos:
 
-Uses a locally running model (qwen3:0.6b) running in Docker to generate advice for a given destination.
+1. An AI based "travel advisor" application which uses a local model (`qwen3`) running on Ollama. The application also contains a local guardrail that (tries to) prevent application misuse by blocking any non travel related searches.
+1. A second travel advice application. This one leverages the agentic "tool calling" pattern to answer this query:
+    * Given a destination, answer three questions:
+       1) What's the weather like at the destination?
+       2) How far away from Las Vegas is the destination?
+       3) What is the flight time from Las Vegas to the destination?
 
-App also contains a guardrail to (try to) prevent misuse of the application.
+Both applications emit and capture telemetry data via OpenTelemetry.
 
 > **Note**
 > This product is not officially supported by Dynatrace!
