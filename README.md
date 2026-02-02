@@ -1,5 +1,10 @@
 # AI Observability Hands On with Local Guardrails and Tool Calling
 
+> **Note**
+> This product is not officially supported by Dynatrace!
+
+![title](screenshot.png)
+
 This branch contains two demos:
 
 1. An AI based "travel advisor" application which uses a local model (`qwen3`) running on Ollama. The application also contains a local guardrail that (tries to) prevent application misuse by blocking any non travel related searches.
@@ -10,11 +15,6 @@ This branch contains two demos:
        3) What is the flight time from Las Vegas to the destination?
 
 Both applications emit and capture telemetry data via OpenTelemetry.
-
-> **Note**
-> This product is not officially supported by Dynatrace!
-
-![title](screenshot.png)
 
 ## Prerequisites
 
