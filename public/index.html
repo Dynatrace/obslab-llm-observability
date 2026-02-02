@@ -467,7 +467,8 @@
   document.getElementById("advisorForm").addEventListener("submit", function(event) {
       event.preventDefault(); // Prevents the default form submission
       // set the loading indicator
-      document.getElementById("advise").innerHTML = "<h1 _ngcontent-aas-c46='' class='hero-title'><img width='400' src='/images/loader-animation-freebie.gif'></h1>";
+      document.getElementById("advise").innerHTML = "<h2>AI Model (<a href='https://ollama.com/library/qwen3' target='_blank'>qwen3:0.6b</a>) is running locally so this search takes some time (30s). Please be patient...</h2><h1 _ngcontent-aas-c46='' class='hero-title'><img width='400' src='/images/loader-animation-freebie.gif'></h1>";
+
       // Get form data
       var formData = new FormData(event.target);
 
