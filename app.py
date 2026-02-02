@@ -134,7 +134,7 @@ if __name__ == "__main__":
     print("The app is running. Please go to http://localhost:8080")
 
     # Mount static files at the root
-    app.mount("/", StaticFiles(directory="../public", html=True), name="public")
+    app.mount("/", StaticFiles(directory="./public", html=True), name="public")
 
     # Run the app using uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8080)
